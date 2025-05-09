@@ -1,0 +1,27 @@
+# Node modules et dépendances
+node_modules/
+deno.lock
+npm.lock
+*.log
+
+# Éditeur
+.vscode/
+.idea/
+
+# Système
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+*.tmp
+*.bak
+
+# Deno cache
+deno-dir/
+.cache/
+
+# Environnement
+.env
+.env.*

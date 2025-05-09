@@ -13,12 +13,12 @@ GameBoxd est une application web inspirée de Letterboxd, mais dédiée aux jeux
 
 1. Cloner le dépôt :
    ```bash
-   git clone https://github.com/ton-utilisateur/gameboxd.git
+   git clone https://github.com/jarodCode/gta-frontend.git
    ```
 
 2. Lancer un serveur local avec Deno :
    ```bash
-   deno run --allow-net --allow-read server.ts
+   deno task dev
    ```
 
 ## Arborescence du projet
@@ -26,12 +26,12 @@ GameBoxd est une application web inspirée de Letterboxd, mais dédiée aux jeux
 - `index.html` — Page d'accueil
 - `style.css` — Feuille de style principale
 - `app.js` — Logique de l'application
-- `server.ts` — Serveur Deno pour héberger les fichiers statiques
+- `main.js` — Serveur Deno pour héberger les fichiers statiques
 
 ## À venir
 
 - Authentification utilisateur
-- Intégration d'une API de jeux (IGDB ou RAWG)
+- Intégration d'une API de jeux
 - Système de commentaires
 
 
