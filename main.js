@@ -22,7 +22,7 @@ app.use(async (ctx) => {
 
 if (Deno.args.length < 1) {
   console.log(
-    `Usage: $ deno run --allow-net --allow-read=./ server.ts PORT [CERT_PATH KEY_PATH]`
+    `Usage: $ deno run --allow-net --allow-read=./ server.ts PORT [CERT_PATH KEY_PATH]`,
   );
   Deno.exit();
 }
@@ -36,6 +36,7 @@ if (Deno.args.length >= 3) {
   console.log(`SSL conf ready (use https)`);
 }
 
-
-console.log(`Oak static server running on port ${options.port} for the files in ${ROOT}, http://localhost:${options.port}`);
+console.log(
+  `Oak static server running on port ${options.port} for the files in ${ROOT}, http://localhost:${options.port}`,
+);
 await app.listen(options);
