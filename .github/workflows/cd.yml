@@ -11,42 +11,26 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Setup Deno
-      uses: denoland/setup-deno@v1
       with:
-        deno-version: 1.x
+        fetch-depth: 0  # Fetch all history for proper git push
 
-    # If you have a build step for your frontend
-    - name: Build frontend
-      run: |
-        # Add your build commands here
-        # For example, if you're using Deno for bundling:
-        deno bundle src/main.ts static/js/bundle.js
-
-    # Setup SSH for deployment
+    # Set up SSH for Dokku deployment
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+        key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.DOKKU_KNOWN_HOSTS }}
         if_key_exists: replace
 
-    # Deploy to local cloud server
-    - name: Deploy to server
+    # Add Dokku as a remote and push
+    - name: Deploy to Dokku
       run: |
-        # Create deployment directory with timestamp
-        DEPLOY_DIR="gta-frontend-$(date +%Y%m%d%H%M%S)"
+        # Set up Git user identity (required for the push)
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "GitHub Actions"
         
-        # Create deployment package
-        mkdir -p deploy
-        cp -r index.html assets/ css/ js/ static/ deploy/ 2>/dev/null || :
+        # Add Dokku as a remote
+        git remote add dokku dokku@${{ secrets.DOKKU_HOST }}:gta-frontend
         
-        # Transfer files to server
-        scp -r deploy/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/path/to/web/deployments/$DEPLOY_DIR
-        
-        # Update symlink to make this the live version
-        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "ln -sfn /path/to/web/deployments/$DEPLOY_DIR /path/to/web/deployments/current"
-        
-        # Optional: Clear cache or restart web server if needed
-        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "sudo systemctl reload nginx || sudo systemctl restart nginx"
+        # Push to Dokku
+        git push dokku main:master -f
