@@ -1,7 +1,7 @@
 # GameBoxd
 
 GameBoxd est une application web inspirée de Letterboxd, mais dédiée aux jeux
-vidéo. Elle permet aux utilisateurs de noter, critiquer et cataloguer leurs jeux 
+vidéo. Elle permet aux utilisateurs de noter, critiquer et cataloguer leurs jeux
 préférés.
 
 ## Fonctionnalités principales
@@ -35,5 +35,3 @@ préférés.
 - Authentification utilisateur
 - Intégration d'une API de jeux
 - Système de commentaires
-
-

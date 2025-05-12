@@ -19,7 +19,6 @@ app.use(async (ctx) => {
   }
 });
 
-
 if (Deno.args.length < 1) {
   console.log(
     `Usage: $ deno run --allow-net --allow-read=./ server.ts PORT [CERT_PATH KEY_PATH]`,
