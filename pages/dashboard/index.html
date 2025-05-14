@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Game Tracking App</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/main.ts" type="module" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Game Tracking App</h1>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/pages/dashboard/" class="active">Dashboard</a></li>
+                    <li><a href="/pages/chat/">Chat</a></li>
+                    <li><a href="#" id="logout-link">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="dashboard">
+                <div class="dashboard-header">
+                    <h2>Welcome, <span id="user-name">User</span>!</h2>
+                </div>
+                
+                <div class="dashboard-content">
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                            <h3>Games Tracked</h3>
+                            <p id="games-count">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Currently Playing</h3>
+                            <p id="playing-count">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Completed</h3>
+                            <p id="completed-count">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-activity">
+                        <h3>Recent Activity</h3>
+                        <div id="activity-list" class="activity-list">
+                            <p class="empty-state">No recent activity.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 Game Tracking App. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

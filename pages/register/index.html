@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Game Tracking App</title>
+    <title>Register - Game Tracking App</title>
     <link rel="stylesheet" href="/css/styles.css">
     <script src="/js/main.ts" type="module" defer></script>
 </head>
@@ -14,31 +14,39 @@
             <nav id="main-nav">
                 <ul>
                     <li><a href="/">Home</a></li>
-                    <li><a href="/pages/login/" class="active">Login</a></li>
-                    <li><a href="/pages/register/">Register</a></li>
+                    <li><a href="/pages/login/">Login</a></li>
+                    <li><a href="/pages/register/" class="active">Register</a></li>
                 </ul>
             </nav>
         </header>
         
         <main>
             <section class="auth-form">
-                <h2>Login</h2>
-                <form id="login-form">
+                <h2>Register</h2>
+                <form id="register-form">
                     <div class="form-group">
                         <label for="username">Username</label>
                         <input type="text" id="username" name="username" required>
                     </div>
                     <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Login</button>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required minlength="8">
                     </div>
-                    <div id="login-error" class="error-message"></div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" name="confirmPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                    <div id="register-error" class="error-message"></div>
                 </form>
                 <p class="form-footer">
-                    Don't have an account? <a href="/pages/register/">Register here</a>
+                    Already have an account? <a href="/pages/login/">Login here</a>
                 </p>
             </section>
         </main>

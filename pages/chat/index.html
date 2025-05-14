@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Game Tracking App</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/main.ts" type="module" defer></script>
+</head>
+<body>
+    <div class="container chat-container">
+        <header>
+            <h1>Game Tracking App</h1>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/pages/dashboard/">Dashboard</a></li>
+                    <li><a href="/pages/chat/" class="active">Chat</a></li>
+                    <li><a href="#" id="logout-link">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="chat-section">
+                <h2>Live Chat</h2>
+                <div class="chat-box">
+                    <div id="chat-messages" class="chat-messages">
+                        <!-- Messages will be inserted here via JavaScript -->
+                    </div>
+                    <div class="chat-input">
+                        <form id="chat-form">
+                            <input type="text" id="message-input" placeholder="Type your message..." required>
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="chat-status">
+                    <p id="connection-status">Connecting...</p>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 Game Tracking App. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
