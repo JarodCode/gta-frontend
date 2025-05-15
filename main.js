@@ -26,7 +26,7 @@ if (Deno.args.length < 1) {
   Deno.exit();
 }
 
-const options = {port: Deno.args[0]};
+const options = { port: Deno.args[0] };
 
 if (Deno.args.length >= 3) {
   options.secure = true;
