@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Publishers | Game Reviews</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Load app.js as a regular script instead of a module to avoid MIME type issues -->
+    <script src="../js/app.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="../index.html">Game Library</a>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="games/list.html">Games</a></li>
+                        <li><a href="developers.html">Developers</a></li>
+                        <li><a href="publishers.html" class="active">Publishers</a></li>
+                        <li><a href="genres.html">Genres</a></li>
+                        <li id="auth-links">
+                            <a href="login/index.html">Login</a>
+                            <a href="register/index.html">Register</a>
+                        </li>
+                        <li id="user-menu" style="display: none;">
+                            <button id="user-menu-button">
+                                <span id="username-display">User</span>
+                                <span class="dropdown-arrow">▼</span>
+                            </button>
+                            <div id="user-dropdown" class="dropdown-menu">
+                                <a href="profile.html">Profile</a>
+                                <a href="#" id="logout-button">Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Game Publishers</h1>
+        <div id="loading-indicator" class="loading">
+            <i class="fas fa-spinner fa-spin"></i> Loading publishers...
+        </div>
+        <div id="publishers-list" class="card-container"></div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Game Library. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { getHardcodedGames } from '../js/hardcoded-games.js';
+        import { getCurrentUser, logout } from '../js/mock-auth.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            setupUserMenu();
+            loadPublishers();
+        });
+
+        function setupUserMenu() {
+            const user = getCurrentUser();
+            const authLinks = document.getElementById('auth-links');
+            const userMenu = document.getElementById('user-menu');
+            
+            if (user) {
+                // User is logged in
+                authLinks.style.display = 'none';
+                userMenu.style.display = 'block';
+                document.getElementById('username-display').textContent = user.username;
+                
+                // User menu dropdown toggle
+                const userMenuButton = document.getElementById('user-menu-button');
+                const userDropdown = document.getElementById('user-dropdown');
+                
+                userMenuButton.addEventListener('click', () => {
+                    userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (e.target !== userMenuButton && !userMenuButton.contains(e.target)) {
+                        userDropdown.style.display = 'none';
+                    }
+                });
+                
+                // Logout functionality
+                document.getElementById('logout-button').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                    window.location.reload();
+                });
+            } else {
+                // User is not logged in
+                authLinks.style.display = 'block';
+                userMenu.style.display = 'none';
+            }
+        }
+
+        function loadPublishers() {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const publishersListElement = document.getElementById('publishers-list');
+            
+            try {
+                loadingIndicator.style.display = 'block';
+                
+                // Get all games from our hardcoded list
+                const games = getHardcodedGames();
+                
+                // Extract unique publishers
+                const publishersMap = new Map();
+                
+                games.forEach(game => {
+                    if (game.publishers && game.publishers.length > 0) {
+                        game.publishers.forEach(publisher => {
+                            if (!publishersMap.has(publisher.id)) {
+                                publishersMap.set(publisher.id, {
+                                    id: publisher.id,
+                                    name: publisher.name,
+                                    gameCount: 1
+                                });
+                            } else {
+                                const pub = publishersMap.get(publisher.id);
+                                pub.gameCount++;
+                            }
+                        });
+                    }
+                });
+                
+                // Convert Map to array and sort alphabetically
+                const publishersList = Array.from(publishersMap.values())
+                    .sort((a, b) => a.name.localeCompare(b.name));
+                
+                // Display publishers
+                publishersListElement.innerHTML = '';
+                
+                if (publishersList.length > 0) {
+                    const publisherCards = publishersList.map(publisher => `
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">
+                                    <a href="publisher-details.html?id=${publisher.id}" data-publisher-id="${publisher.id}">
+                                        ${publisher.name}
+                                    </a>
+                                </h3>
+                                <p>${publisher.gameCount} game${publisher.gameCount !== 1 ? 's' : ''}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    publishersListElement.innerHTML = publisherCards;
+                    
+                    // Add event listeners to publisher links
+                    document.querySelectorAll('[data-publisher-id]').forEach(link => {
+                        link.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const publisherId = link.getAttribute('data-publisher-id');
+                            window.location.href = `publisher-details.html?id=${publisherId}`;
+                        });
+                    });
+                } else {
+                    publishersListElement.innerHTML = '<p>No publishers found.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading publishers:', error);
+                publishersListElement.innerHTML = '<p>Error loading publishers. Please try again later.</p>';
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

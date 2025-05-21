@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - GameTrackr</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+    <script src="../../js/login.js" type="module" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="logo">GameTrackr</h1>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../login/index.html" class="active">Login</a></li>
+                    <li><a href="../register/index.html">Register</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="auth-form">
+                <h2>Login to Your Account</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                    <div id="login-error" class="error-message"></div>
+                </form>
+                <p class="form-footer">
+                    Don't have an account? <a href="../register/index.html">Register here</a>
+                </p>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 GameTrackr. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

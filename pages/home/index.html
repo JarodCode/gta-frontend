@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameTrackr - Track Your Gaming Journey</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <script src="/js/home.js" type="module" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="logo">GameTrackr</h1>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="/" class="active">Home</a></li>
+                    <li><a href="/pages/login/">Login</a></li>
+                    <li><a href="/pages/register/">Register</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="hero">
+                <div class="hero-content">
+                    <h2>Track Your Gaming Journey</h2>
+                    <p>Review, rate, and discover new games. Create your own gaming diary.</p>
+                    <div class="search-container">
+                        <input type="text" id="game-search" placeholder="Search for games...">
+                        <button id="search-btn">Search</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="trending-games">
+                <h2>Trending Games</h2>
+                <div class="games-grid" id="trending-games-container">
+                    <!-- Games will be loaded here via JS -->
+                    <div class="game-card skeleton"></div>
+                    <div class="game-card skeleton"></div>
+                    <div class="game-card skeleton"></div>
+                    <div class="game-card skeleton"></div>
+                </div>
+            </section>
+
+            <section class="recent-reviews">
+                <h2>Recent Reviews</h2>
+                <div class="reviews-container" id="recent-reviews-container">
+                    <!-- Reviews will be loaded here via JS -->
+                    <div class="review-card skeleton"></div>
+                    <div class="review-card skeleton"></div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 GameTrackr. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html> 

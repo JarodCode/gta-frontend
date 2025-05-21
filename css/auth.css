@@ -1,0 +1,100 @@
+/* Authentication Forms Styling */
+
+.auth-form {
+  max-width: 480px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--secondary-color);
+}
+
+.auth-form .btn {
+  width: 100%;
+  padding: 0.875rem;
+  font-size: 1rem;
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.form-footer a {
+  font-weight: 500;
+}
+
+/* Password strength indicator */
+.password-strength {
+  margin-top: 0.5rem;
+  height: 5px;
+  background-color: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.password-strength-bar {
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s, background-color 0.3s;
+}
+
+.password-strength-text {
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  text-align: right;
+}
+
+/* Weak password */
+.password-strength.weak .password-strength-bar {
+  width: 33%;
+  background-color: #d9534f;
+}
+
+/* Medium password */
+.password-strength.medium .password-strength-bar {
+  width: 66%;
+  background-color: #f0ad4e;
+}
+
+/* Strong password */
+.password-strength.strong .password-strength-bar {
+  width: 100%;
+  background-color: #5cb85c;
+}
+
+/* Remember me checkbox */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+.checkbox-group label {
+  margin-bottom: 0;
+  font-weight: normal;
+}
+
+/* Additional form validation styling */
+input.invalid {
+  border-color: var(--error-color);
+}
+
+.validation-message {
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  color: var(--error-color);
+} 

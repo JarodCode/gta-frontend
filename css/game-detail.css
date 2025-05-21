@@ -1,0 +1,175 @@
+/* Game detail page styling */
+.game-details {
+  padding: 1rem 0;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.game-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.game-cover {
+  flex: 0 0 300px;
+  max-width: 300px;
+}
+
+.game-cover img {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+  height: 450px;
+}
+
+.game-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.game-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.game-meta {
+  margin-bottom: 1.5rem;
+}
+
+.game-meta p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.game-description {
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.rating-section {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+}
+
+.rating-section h3 {
+  margin-top: 0;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.rating-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+#rating-select {
+  flex-grow: 1;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+#submit-rating {
+  padding: 0.75rem 1.5rem;
+  background-color: #ff5722;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#submit-rating:hover {
+  background-color: #e64a19;
+}
+
+#rating-message {
+  margin-top: 0.75rem;
+  color: #388e3c;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error {
+  color: #d32f2f;
+}
+
+/* Add a style for the game rating */
+.game-rating {
+  font-weight: bold;
+  color: #ff5722;
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+/* Small style adjustment for larger screens */
+@media (min-width: 769px) {
+  .game-cover {
+    margin-right: 2rem;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .game-header {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .game-cover {
+    flex: 0 0 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .game-cover img {
+    width: 300px;
+    height: 420px;
+  }
+  
+  .game-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-cover img {
+    width: 100%;
+    max-width: 250px;
+    height: 350px;
+  }
+  
+  .game-title {
+    font-size: 1.75rem;
+  }
+  
+  .rating-controls {
+    flex-direction: column;
+  }
+  
+  #submit-rating {
+    width: 100%;
+  }
+} 

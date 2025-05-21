@@ -27,7 +27,6 @@ if (Deno.args.length < 1) {
 }
 
 const options = { port: Deno.args[0] };
-
 if (Deno.args.length >= 3) {
   options.secure = true;
   options.cert = await Deno.readTextFile(Deno.args[1]);

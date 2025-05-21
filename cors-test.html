@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test Page</title>
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .console {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: var(--font-code);
+            margin: 20px 0;
+        }
+        .console-line {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .success {
+            color: var(--success-color);
+        }
+        .error {
+            color: var(--error-color);
+        }
+        .warning {
+            color: var(--warning-color);
+        }
+        .info {
+            color: var(--primary-color);
+        }
+        .url-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: var(--bg-medium);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        .json-display {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1><a href="index.html">GameRevu</a></h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="cookie-test.html" class="nav-link">Cookie Test</a></li>
+                        <li><a href="cors-test.html" class="active nav-link">CORS Test</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1>CORS Test Page</h1>
+            <p>This page tests if CORS is properly configured for API requests.</p>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h2>Server Configuration</h2>
+                    <div class="form-group">
+                        <label for="server-port">API Server Port:</label>
+                        <select id="server-port" class="url-input">
+                            <option value="8000">8000 (Deno Backend)</option>
+                            <option value="3000">3000 (Frontend Server)</option>
+                            <option value="5000">5000 (Other)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h2>Test API Endpoint</h2>
+                    <input type="text" id="api-url" class="url-input" value="/api/auth/me" placeholder="API endpoint URL (e.g., /api/auth/me)">
+                    <div class="button-group">
+                        <button id="test-get" class="button">Test GET</button>
+                        <button id="test-options" class="button">Test OPTIONS</button>
+                        <button id="test-fetch" class="button">Test Fetch</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h2>JSON Parse Test</h2>
+                    <textarea id="json-input" class="url-input" rows="5" placeholder='Paste JSON response here to test parsing: {"key": "value"}'></textarea>
+                    <div class="button-group">
+                        <button id="parse-json" class="button">Test JSON Parse</button>
+                        <button id="auto-fix-json" class="button">Try to Fix JSON</button>
+                    </div>
+                    <div id="json-result" class="json-display"></div>
+                </div>
+            </div>
+            
+            <h2>Server Information</h2>
+            <div class="card">
+                <div class="card-body">
+                    <p><strong>Page Origin:</strong> <span id="page-origin"></span></p>
+                    <p><strong>API URL Base:</strong> <span id="api-base"></span></p>
+                </div>
+            </div>
+            
+            <h2>Console Output</h2>
+            <div class="console" id="console-output"></div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2023 CORS Test Page</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Console logging
+        function logToConsole(message, type = 'info') {
+            const consoleOutput = document.getElementById('console-output');
+            const line = document.createElement('div');
+            line.className = `console-line ${type}`;
+            line.textContent = message;
+            consoleOutput.appendChild(line);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            console.log(`[${type}] ${message}`);
+        }
+        
+        // Test API connection with GET request
+        async function testGetRequest() {
+            const apiUrl = document.getElementById('api-url').value;
+            const serverPort = document.getElementById('server-port').value;
+            const token = localStorage.getItem('token');
+            
+            logToConsole(`Testing GET request to: ${apiUrl} on port: ${serverPort}`, 'info');
+            
+            // Build URL based on the selected port
+            let url;
+            if (apiUrl.startsWith('http')) {
+                url = apiUrl;
+            } else {
+                url = `http://localhost:${serverPort}${apiUrl.startsWith('/') ? apiUrl : '/' + apiUrl}`;
+            }
+            
+            logToConsole(`Full URL: ${url}`, 'info');
+            
+            try {
+                // Create an XMLHttpRequest (more verbose about errors than fetch)
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                
+                // Add authentication if token exists
+                if (token) {
+                    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+                    logToConsole('Added Authorization header with token', 'info');
+                } else {
+                    logToConsole('No token found in localStorage', 'warning');
+                }
+                
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            logToConsole(`Response received (${xhr.status})`, 'success');
+                            logToConsole(`Response text: ${xhr.responseText}`, 'info');
+                            
+                            // Auto-populate the JSON test area
+                            document.getElementById('json-input').value = xhr.responseText;
+                            
+                            // Try to parse it
+                            try {
+                                const data = JSON.parse(xhr.responseText);
+                                logToConsole('Successfully parsed response as JSON', 'success');
+                                const jsonResult = document.getElementById('json-result');
+                                jsonResult.textContent = JSON.stringify(data, null, 2);
+                                jsonResult.style.color = 'var(--success-color)';
+                            } catch (e) {
+                                logToConsole(`JSON parse error: ${e.message}`, 'error');
+                            }
+                        } else {
+                            logToConsole(`Error response (${xhr.status}): ${xhr.statusText}`, 'error');
+                            if (xhr.responseText) {
+                                logToConsole(`Response text: ${xhr.responseText}`, 'error');
+                                document.getElementById('json-input').value = xhr.responseText;
+                            }
+                        }
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    logToConsole('Network error occurred. CORS might be blocking the request.', 'error');
+                    logToConsole('Check the browser console for more details.', 'error');
+                };
+                
+                xhr.send();
+                logToConsole('Request sent, waiting for response...', 'info');
+            } catch (error) {
+                logToConsole(`Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test API connection with OPTIONS request (CORS preflight)
+        async function testOptionsRequest() {
+            const apiUrl = document.getElementById('api-url').value;
+            const serverPort = document.getElementById('server-port').value;
+            
+            logToConsole(`Testing OPTIONS request to: ${apiUrl} on port: ${serverPort}`, 'info');
+            
+            // Build URL based on the selected port
+            let url;
+            if (apiUrl.startsWith('http')) {
+                url = apiUrl;
+            } else {
+                url = `http://localhost:${serverPort}${apiUrl.startsWith('/') ? apiUrl : '/' + apiUrl}`;
+            }
+            
+            logToConsole(`Full URL: ${url}`, 'info');
+            
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('OPTIONS', url, true);
+                
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            logToConsole(`OPTIONS response received (${xhr.status})`, 'success');
+                            
+                            // Check CORS headers
+                            const allowOrigin = xhr.getResponseHeader('Access-Control-Allow-Origin');
+                            const allowMethods = xhr.getResponseHeader('Access-Control-Allow-Methods');
+                            const allowHeaders = xhr.getResponseHeader('Access-Control-Allow-Headers');
+                            const allowCredentials = xhr.getResponseHeader('Access-Control-Allow-Credentials');
+                            
+                            logToConsole(`Access-Control-Allow-Origin: ${allowOrigin || 'Not set'}`, allowOrigin ? 'success' : 'warning');
+                            logToConsole(`Access-Control-Allow-Methods: ${allowMethods || 'Not set'}`, allowMethods ? 'success' : 'warning');
+                            logToConsole(`Access-Control-Allow-Headers: ${allowHeaders || 'Not set'}`, allowHeaders ? 'success' : 'warning');
+                            logToConsole(`Access-Control-Allow-Credentials: ${allowCredentials || 'Not set'}`, allowCredentials ? 'success' : 'warning');
+                        } else {
+                            logToConsole(`Error response (${xhr.status}): ${xhr.statusText}`, 'error');
+                        }
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    logToConsole('Network error occurred. CORS might be blocking the OPTIONS request.', 'error');
+                };
+                
+                xhr.send();
+                logToConsole('OPTIONS request sent, waiting for response...', 'info');
+            } catch (error) {
+                logToConsole(`Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test API with fetch API (modern approach)
+        async function testFetchRequest() {
+            const apiUrl = document.getElementById('api-url').value;
+            const serverPort = document.getElementById('server-port').value;
+            const token = localStorage.getItem('token');
+            
+            logToConsole(`Testing fetch API request to: ${apiUrl} on port: ${serverPort}`, 'info');
+            
+            // Build URL based on the selected port
+            let url;
+            if (apiUrl.startsWith('http')) {
+                url = apiUrl;
+            } else {
+                url = `http://localhost:${serverPort}${apiUrl.startsWith('/') ? apiUrl : '/' + apiUrl}`;
+            }
+            
+            logToConsole(`Full URL: ${url}`, 'info');
+            
+            try {
+                const headers = {
+                    'Accept': 'application/json'
+                };
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                    logToConsole('Added Authorization header with token', 'info');
+                } else {
+                    logToConsole('No token found in localStorage', 'warning');
+                }
+                
+                logToConsole('Sending fetch request...', 'info');
+                const response = await fetch(url, { 
+                    method: 'GET',
+                    headers,
+                    credentials: 'same-origin' // Send cookies if available
+                });
+                
+                logToConsole(`Response status: ${response.status} ${response.statusText}`, 'info');
+                
+                // Get the raw text first for inspection
+                const text = await response.text();
+                logToConsole(`Raw response text: ${text}`, 'info');
+                
+                // Auto-populate the JSON test area
+                document.getElementById('json-input').value = text;
+                
+                // Try to parse the text
+                try {
+                    const data = JSON.parse(text);
+                    logToConsole(`Response parsed as JSON: ${JSON.stringify(data)}`, 'success');
+                    
+                    const jsonResult = document.getElementById('json-result');
+                    jsonResult.textContent = JSON.stringify(data, null, 2);
+                    jsonResult.style.color = 'var(--success-color)';
+                } catch (error) {
+                    logToConsole(`JSON parse error: ${error.message}`, 'error');
+                    
+                    // Try to extract valid JSON
+                    tryFixJson(text);
+                }
+            } catch (error) {
+                logToConsole(`Fetch error: ${error.message}`, 'error');
+                logToConsole('This could be a CORS issue or network problem.', 'error');
+            }
+        }
+        
+        // Test JSON parsing
+        function testJsonParse() {
+            const jsonText = document.getElementById('json-input').value;
+            const jsonResult = document.getElementById('json-result');
+            
+            if (!jsonText.trim()) {
+                logToConsole('No JSON text provided to parse', 'warning');
+                jsonResult.textContent = '';
+                return;
+            }
+            
+            try {
+                logToConsole('Attempting to parse JSON input', 'info');
+                const data = JSON.parse(jsonText);
+                logToConsole('JSON successfully parsed', 'success');
+                
+                jsonResult.textContent = JSON.stringify(data, null, 2);
+                jsonResult.style.color = 'var(--success-color)';
+            } catch (error) {
+                logToConsole(`JSON parse error: ${error.message}`, 'error');
+                
+                jsonResult.textContent = `Error: ${error.message}\nAt position: ${error.message.match(/position (\d+)/)?.[1] || 'unknown'}`;
+                jsonResult.style.color = 'var(--error-color)';
+                
+                // Show where the error might be
+                if (error.message.includes('position')) {
+                    const position = parseInt(error.message.match(/position (\d+)/)[1], 10);
+                    const errorContext = jsonText.substring(
+                        Math.max(0, position - 20),
+                        Math.min(jsonText.length, position + 20)
+                    );
+                    
+                    logToConsole(`Error context: "...${errorContext}..."`, 'error');
+                    logToConsole(`Check around character: ${jsonText.charAt(position)}`, 'error');
+                }
+            }
+        }
+        
+        // Try to fix JSON and parse it
+        function tryFixJson(text = null) {
+            const jsonText = text || document.getElementById('json-input').value;
+            const jsonResult = document.getElementById('json-result');
+            
+            if (!jsonText.trim()) {
+                logToConsole('No JSON text provided to fix', 'warning');
+                return;
+            }
+            
+            logToConsole('Attempting to fix malformed JSON', 'info');
+            
+            // Clean and try different fixes
+            let cleanedText = jsonText.trim();
+            let parsed = null;
+            
+            // 1. Try parsing as is first after trimming
+            try {
+                parsed = JSON.parse(cleanedText);
+                logToConsole('JSON is valid after trimming whitespace', 'success');
+            } catch (e) {
+                // 2. Try to find JSON object in text
+                if (cleanedText.includes('{') && cleanedText.includes('}')) {
+                    try {
+                        const start = cleanedText.indexOf('{');
+                        const end = cleanedText.lastIndexOf('}') + 1;
+                        cleanedText = cleanedText.substring(start, end);
+                        
+                        logToConsole(`Extracted potential JSON object: ${cleanedText}`, 'info');
+                        parsed = JSON.parse(cleanedText);
+                        logToConsole('Successfully parsed extracted JSON object', 'success');
+                    } catch (e2) {
+                        // 3. Try replacing common issues
+                        try {
+                            // Fix trailing commas
+                            cleanedText = cleanedText.replace(/,\s*([\]}])/g, '$1');
+                            
+                            // Fix unquoted property names
+                            cleanedText = cleanedText.replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3');
+                            
+                            // Fix single quoted strings
+                            cleanedText = cleanedText.replace(/([{,]\s*"\w+":\s*)'([^']*)'/g, '$1"$2"');
+                            
+                            logToConsole(`Applied fixes to JSON: ${cleanedText}`, 'info');
+                            parsed = JSON.parse(cleanedText);
+                            logToConsole('Successfully parsed fixed JSON', 'success');
+                        } catch (e3) {
+                            logToConsole('Could not automatically fix JSON', 'error');
+                        }
+                    }
+                } else {
+                    logToConsole('No JSON object found in the text', 'error');
+                }
+            }
+            
+            if (parsed) {
+                jsonResult.textContent = JSON.stringify(parsed, null, 2);
+                jsonResult.style.color = 'var(--success-color)';
+                
+                // Update the textarea with the fixed JSON
+                document.getElementById('json-input').value = JSON.stringify(parsed);
+            } else {
+                jsonResult.textContent = 'Could not fix the JSON. Check the console for more details.';
+                jsonResult.style.color = 'var(--error-color)';
+            }
+        }
+        
+        // Display server information
+        function showServerInfo() {
+            document.getElementById('page-origin').textContent = window.location.origin;
+            
+            const frontendPort = window.location.port || '80';
+            const backendPort = document.getElementById('server-port').value;
+            
+            document.getElementById('api-base').textContent = 
+                `Frontend: ${window.location.origin} | Backend: http://localhost:${backendPort}/api`;
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('test-get').addEventListener('click', testGetRequest);
+            document.getElementById('test-options').addEventListener('click', testOptionsRequest);
+            document.getElementById('test-fetch').addEventListener('click', testFetchRequest);
+            document.getElementById('parse-json').addEventListener('click', testJsonParse);
+            document.getElementById('auto-fix-json').addEventListener('click', () => tryFixJson());
+            
+            // Initial setup
+            logToConsole('CORS test page loaded', 'info');
+            showServerInfo();
+            
+            // Check if token exists
+            const token = localStorage.getItem('token');
+            if (token) {
+                logToConsole('Found authentication token in localStorage', 'success');
+                logToConsole(`Token: ${token.substring(0, 15)}...`, 'info');
+            } else {
+                logToConsole('No authentication token found. Some API tests may fail.', 'warning');
+                logToConsole('Try logging in first, then come back to this page.', 'info');
+            }
+        });
+    </script>
+</body>
+</html> 
