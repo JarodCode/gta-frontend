@@ -1,19 +1,204 @@
 // reviews.js - Module for handling game reviews
 import { getCurrentUser } from './auth.js';
 
+// API endpoints
+const API_BASE_URL = 'http://localhost:8080/api';
+const REVIEWS_ENDPOINTS = {
+  getAll: `${API_BASE_URL}/reviews`,
+  getByGame: (gameId) => `${API_BASE_URL}/reviews/game/${gameId}`,
+  getByUser: (userId) => `${API_BASE_URL}/reviews/user/${userId}`,
+  add: `${API_BASE_URL}/reviews`,
+  delete: (reviewId) => `${API_BASE_URL}/reviews/${reviewId}`
+};
+
+// WebSocket endpoint for review notifications - use same port as API
+const WS_REVIEWS_ENDPOINT = 'ws://localhost:8080/ws/reviews';
+
+// In-memory cache for reviews until API is implemented
+const reviewsCache = {};
+const ratingsCache = {};
+
+// WebSocket connection for real-time review notifications
+let websocket = null;
+const reviewListeners = [];
+
+// Initialize WebSocket when needed, not automatically
+export async function ensureWebSocketConnection() {
+  if (!websocket || websocket.readyState === WebSocket.CLOSED) {
+    await initWebSocket();
+  }
+  return websocket;
+}
+
+// Initialize WebSocket connection
+async function initWebSocket() {
+  if (websocket !== null && websocket.readyState !== WebSocket.CLOSED) {
+    // Already initialized and not closed
+    return websocket;
+  }
+  
+  try {
+    console.log('Connecting to review notification WebSocket...');
+    
+    // Get current user 
+    const user = await getCurrentUser();
+    let wsUrl = WS_REVIEWS_ENDPOINT;
+    
+    // Add user ID to WebSocket URL if available
+    if (user && user.id) {
+      wsUrl += `?userId=${encodeURIComponent(user.id)}`;
+    }
+    
+    websocket = new WebSocket(wsUrl);
+    
+    websocket.onopen = () => {
+      console.log('WebSocket connection established for review notifications');
+    };
+    
+    websocket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log('WebSocket message received:', data);
+        
+        if (data.type === 'new_review') {
+          // Handle new review notification
+          const { gameId, review } = data;
+          
+          // Update cache
+          if (!reviewsCache[gameId]) {
+            reviewsCache[gameId] = [];
+          }
+          
+          // Check if review already exists
+          const existingIndex = reviewsCache[gameId].findIndex(r => r.id === review.id);
+          if (existingIndex >= 0) {
+            // Update existing review
+            reviewsCache[gameId][existingIndex] = review;
+          } else {
+            // Add new review
+            reviewsCache[gameId].push(review);
+          }
+          
+          // Update rating
+          updateGameRating(gameId);
+          
+          // Notify listeners
+          notifyReviewListeners({
+            type: 'new_review',
+            gameId,
+            review
+          });
+        }
+      } catch (error) {
+        console.error('Error processing WebSocket message:', error);
+      }
+    };
+    
+    websocket.onclose = (event) => {
+      console.log('WebSocket connection closed:', event.code, event.reason);
+      websocket = null;
+      
+      // Attempt to reconnect after a delay
+      setTimeout(() => {
+        console.log('Attempting to reconnect WebSocket...');
+        initWebSocket();
+      }, 5000);
+    };
+    
+    websocket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      // Don't try to reconnect immediately on error
+      // The onclose handler will trigger a reconnect if needed
+    };
+    
+    return websocket;
+  } catch (error) {
+    console.error('Failed to initialize WebSocket:', error);
+    return null;
+  }
+}
+
+// Utility function for API calls
+async function apiCall(url, method = 'GET', data = null) {
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  
+  const options = {
+    method,
+    headers,
+    credentials: 'include', // Important for cookies
+  };
+  
+  if (data) {
+    options.body = JSON.stringify(data);
+  }
+  
+  try {
+    console.log(`Making ${method} request to ${url} with options:`, options);
+    const response = await fetch(url, options);
+    
+    console.log(`Response status: ${response.status} ${response.statusText}`);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API error (${response.status}):`, errorText);
+      throw new Error(`Server error: ${response.status}`);
+    }
+    
+    const responseData = await response.json();
+    console.log(`API response data:`, responseData);
+    return responseData;
+  } catch (error) {
+    console.error(`API call error to ${url}:`, error);
+    throw error;
+  }
+}
+
 // Get all reviews for a specific game
 export function getGameReviews(gameId) {
-  const allReviews = JSON.parse(localStorage.getItem('gameReviews') || '{}');
-  return allReviews[gameId] || [];
+  // Return cached reviews for this game or empty array
+  return reviewsCache[gameId] || [];
+}
+
+// Get all reviews for a specific game (async version that fetches from API)
+export async function fetchGameReviews(gameId) {
+  try {
+    console.log(`Fetching reviews for game ${gameId} from API...`);
+    
+    // Call the API to get reviews for this game
+    const url = REVIEWS_ENDPOINTS.getByGame(gameId);
+    console.log(`API URL: ${url}`);
+    
+    const response = await apiCall(url);
+    console.log(`API response:`, response);
+    
+    // If we got a successful response with reviews
+    if (response && response.reviews) {
+      console.log(`Received ${response.reviews.length} reviews from API`);
+      
+      // Update the cache
+      reviewsCache[gameId] = response.reviews;
+      
+      // Update rating
+      updateGameRating(gameId);
+      
+      return response.reviews;
+    }
+    
+    return getGameReviews(gameId); // Fall back to cached reviews if API fails
+  } catch (error) {
+    console.error(`Error fetching reviews for game ${gameId}:`, error);
+    return getGameReviews(gameId); // Fall back to cached reviews
+  }
 }
 
 // Get all reviews by a specific user
 export function getUserReviews(userId) {
-  const allReviews = JSON.parse(localStorage.getItem('gameReviews') || '{}');
   const userReviews = [];
   
   // Iterate through all game reviews to find reviews by this user
-  Object.entries(allReviews).forEach(([gameId, reviews]) => {
+  Object.entries(reviewsCache).forEach(([gameId, reviews]) => {
     reviews.forEach(review => {
       if (review.userId === userId) {
         userReviews.push({
@@ -28,119 +213,125 @@ export function getUserReviews(userId) {
 }
 
 // Add a new review for a game
-export function addReview(gameId, content, rating, gameTitle, gameCoverUrl) {
-  const user = getCurrentUser();
-  if (!user) {
-    throw new Error('You must be logged in to write a review');
+export async function addReview(gameId, content, rating, gameTitle, gameCoverUrl) {
+  try {
+    // Get current user with await to ensure we have the latest data
+    const user = await getCurrentUser();
+    
+    // Strict authentication check
+    if (!user) {
+      console.error('Authentication required: User tried to submit a review without being logged in');
+      throw new Error('You must be logged in to write a review');
+    }
+    
+    if (!user.id || !user.username) {
+      console.error('Invalid user data:', user);
+      throw new Error('Invalid user session. Please log in again.');
+    }
+    
+    if (!gameId) {
+      throw new Error('Game ID is required');
+    }
+    
+    if (!content || content.trim() === '') {
+      throw new Error('Review content is required');
+    }
+    
+    if (!rating || rating < 1 || rating > 5) {
+      throw new Error('Rating must be between 1 and 5');
+    }
+    
+    // Debug log
+    console.log('Adding review:', {
+      gameId,
+      userId: user.id,
+      rating,
+      content
+    });
+    
+    // Create the review object
+    const review = {
+      gameId,
+      content,
+      rating,
+      userId: user.id,
+      username: user.username,
+      createdAt: new Date().toISOString(),
+      // Additional information for notifications
+      gameTitle: gameTitle || 'Unknown Game',
+      gameCoverUrl: gameCoverUrl || ''
+    };
+    
+    // Send to API
+    try {
+      const result = await apiCall(REVIEWS_ENDPOINTS.add, 'POST', review);
+      console.log('Review added successfully:', result);
+      
+      // Update local cache
+      if (!reviewsCache[gameId]) {
+        reviewsCache[gameId] = [];
+      }
+      
+      // Use the server-generated review, or fall back to our local version
+      const savedReview = result.review || { ...review, id: Date.now().toString() };
+      
+      // Add to cache
+      reviewsCache[gameId].push(savedReview);
+      
+      // Update rating
+      updateGameRating(gameId);
+      
+      // Send notification via WebSocket if we don't have a proper API yet
+      if (!result.review) {
+        sendReviewNotification(gameId, savedReview);
+      }
+      
+      return savedReview;
+    } catch (error) {
+      console.error('Error adding review to API:', error);
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error in addReview:', error);
+    throw error;
   }
-  
-  if (!gameId) {
-    throw new Error('Game ID is required');
-  }
-  
-  if (!content || content.trim() === '') {
-    throw new Error('Review content is required');
-  }
-  
-  if (!rating || rating < 1 || rating > 5) {
-    throw new Error('Rating must be between 1 and 5');
-  }
-  
-  // Debug log
-  console.log('Adding review:', {
-    gameId,
-    userId: user.id,
-    rating,
-    content: content.substring(0, 50) + '...' // Log first 50 chars of content
-  });
-  
-  const allReviews = JSON.parse(localStorage.getItem('gameReviews') || '{}');
-  
-  // Initialize game reviews array if it doesn't exist
-  if (!allReviews[gameId]) {
-    allReviews[gameId] = [];
-  }
-  
-  // Check if user has already reviewed this game
-  const existingReviewIndex = allReviews[gameId].findIndex(review => review.userId === user.id);
-  
-  const reviewObj = {
-    id: Date.now().toString(),
-    userId: user.id,
-    username: user.username,
-    content,
-    rating: Number(rating), // Ensure rating is stored as a number
-    gameTitle,
-    gameCoverUrl,
-    createdAt: new Date().toISOString()
-  };
-  
-  if (existingReviewIndex >= 0) {
-    // Update existing review
-    allReviews[gameId][existingReviewIndex] = reviewObj;
-  } else {
-    // Add new review
-    allReviews[gameId].push(reviewObj);
-  }
-  
-  // Debug log
-  console.log('Storing reviews for game:', {
-    gameId,
-    reviewCount: allReviews[gameId].length,
-    reviews: allReviews[gameId]
-  });
-  
-  localStorage.setItem('gameReviews', JSON.stringify(allReviews));
-  
-  // Update game ratings
-  const updatedRating = updateGameRating(gameId);
-  
-  // Debug log
-  console.log('Updated game rating:', {
-    gameId,
-    rating: updatedRating.rating,
-    count: updatedRating.count
-  });
-  
-  // Announce the new review via fake websocket event
-  announceNewReview(gameId, reviewObj);
-  
-  return reviewObj;
 }
 
 // Delete a review
-export function deleteReview(gameId, reviewId) {
-  const user = getCurrentUser();
+export async function deleteReview(gameId, reviewId) {
+  const user = await getCurrentUser();
   if (!user) {
     throw new Error('You must be logged in to delete a review');
   }
   
-  const allReviews = JSON.parse(localStorage.getItem('gameReviews') || '{}');
-  
-  if (!allReviews[gameId]) {
+  try {
+    // Call the API to delete the review
+    const result = await apiCall(REVIEWS_ENDPOINTS.delete(reviewId), 'DELETE');
+    
+    // If successful, update the local cache
+    if (result && result.success) {
+      if (!reviewsCache[gameId]) {
+        return true; // Nothing to delete locally
+      }
+      
+      const reviewIndex = reviewsCache[gameId].findIndex(review => review.id === reviewId);
+      
+      if (reviewIndex !== -1) {
+        // Remove the review from cache
+        reviewsCache[gameId].splice(reviewIndex, 1);
+        
+        // Update game ratings
+        updateGameRating(gameId);
+      }
+      
+      return true;
+    }
+    
     return false;
+  } catch (error) {
+    console.error(`Error deleting review ${reviewId}:`, error);
+    throw error;
   }
-  
-  const reviewIndex = allReviews[gameId].findIndex(review => review.id === reviewId);
-  
-  if (reviewIndex === -1) {
-    return false;
-  }
-  
-  // Only allow users to delete their own reviews
-  if (allReviews[gameId][reviewIndex].userId !== user.id) {
-    throw new Error('You can only delete your own reviews');
-  }
-  
-  // Remove the review
-  allReviews[gameId].splice(reviewIndex, 1);
-  
-  localStorage.setItem('gameReviews', JSON.stringify(allReviews));
-  
-  // Update game ratings
-  updateGameRating(gameId);
-  
-  return true;
 }
 
 /**
@@ -148,13 +339,12 @@ export function deleteReview(gameId, reviewId) {
  * @param {Array} games - Array of game objects
  */
 function initializeGameRatings(games) {
-  const gameRatings = JSON.parse(localStorage.getItem('gameRatings') || '{}');
   let hasChanges = false;
 
   // Add ratings for any new games
   games.forEach(game => {
-    if (!gameRatings[game.id]) {
-      gameRatings[game.id] = {
+    if (!ratingsCache[game.id]) {
+      ratingsCache[game.id] = {
         rating: 0,
         count: 0
       };
@@ -162,12 +352,7 @@ function initializeGameRatings(games) {
     }
   });
 
-  // Save changes if any new games were added
-  if (hasChanges) {
-    localStorage.setItem('gameRatings', JSON.stringify(gameRatings));
-  }
-
-  return gameRatings;
+  return ratingsCache;
 }
 
 /**
@@ -216,12 +401,9 @@ export function getGamesSortedByUserRating(games) {
 export function updateGameRating(gameId) {
   const reviews = getGameReviews(gameId);
   
-  // Get current ratings
-  const gameRatings = JSON.parse(localStorage.getItem('gameRatings') || '{}');
-  
   if (reviews.length === 0) {
     // If no reviews, set rating to 0 but keep the game in ratings
-    gameRatings[gameId] = {
+    ratingsCache[gameId] = {
       rating: 0,
       count: 0
     };
@@ -230,89 +412,89 @@ export function updateGameRating(gameId) {
     const sum = reviews.reduce((total, review) => total + review.rating, 0);
     const avg = sum / reviews.length;
     
-    gameRatings[gameId] = {
+    ratingsCache[gameId] = {
       rating: Number(avg.toFixed(1)),
       count: reviews.length
     };
   }
   
-  // Debug log
-  console.log('Updating game rating:', {
-    gameId,
-    rating: gameRatings[gameId].rating,
-    count: gameRatings[gameId].count,
-    reviews
-  });
-  
-  localStorage.setItem('gameRatings', JSON.stringify(gameRatings));
-  return gameRatings[gameId];
+  return ratingsCache[gameId];
 }
 
-// Get the average rating for a game
+// Get the rating for a specific game
 export function getGameRating(gameId) {
-  const gameRatings = JSON.parse(localStorage.getItem('gameRatings') || '{}');
-  const rating = gameRatings[gameId] || { rating: 0, count: 0 };
-  
-  // Debug log
-  console.log('Getting game rating:', {
-    gameId,
-    rating: rating.rating,
-    count: rating.count
-  });
-  
-  return rating;
+  return ratingsCache[gameId] || { rating: 0, count: 0 };
 }
 
-/**
- * Get all game ratings from localStorage
- * @returns {Object} Object containing game ratings
- */
+// Get all game ratings
 export function getAllGameRatings() {
-  const ratings = localStorage.getItem('gameRatings');
-  if (!ratings) return {};
-  
+  return ratingsCache;
+}
+
+// Send a review notification via WebSocket
+async function sendReviewNotification(gameId, review) {
   try {
-    const parsedRatings = JSON.parse(ratings);
+    // Ensure WebSocket connection is established
+    await ensureWebSocketConnection();
     
-    // Debug log
-    console.log('All game ratings:', parsedRatings);
-    
-    // Transform the data to ensure consistent structure
-    return Object.entries(parsedRatings).reduce((acc, [gameId, data]) => {
-      acc[gameId] = {
-        rating: Number(data.rating || 0),
-        count: Number(data.count || 0)
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+      const notification = {
+        type: 'new_review',
+        gameId,
+        review
       };
-      return acc;
-    }, {});
-  } catch (error) {
-    console.error('Error parsing game ratings:', error);
-    return {};
-  }
-}
-
-// Simulate a WebSocket connection for real-time updates
-let reviewListeners = [];
-
-// Register a callback for new review events
-export function onNewReview(callback) {
-  reviewListeners.push(callback);
-  return () => {
-    // Return a function to unregister the callback
-    reviewListeners = reviewListeners.filter(cb => cb !== callback);
-  };
-}
-
-// Announce a new review to all listeners
-function announceNewReview(gameId, review) {
-  // In a real app, this would be handled by a WebSocket connection
-  reviewListeners.forEach(callback => {
-    setTimeout(() => {
-      callback({
+      
+      websocket.send(JSON.stringify(notification));
+      console.log('Sent review notification via WebSocket');
+    } else {
+      console.warn('WebSocket not connected, unable to send review notification');
+      // Notify local listeners anyway
+      notifyReviewListeners({
         type: 'new_review',
         gameId,
         review
       });
-    }, 0);
+    }
+  } catch (error) {
+    console.error('Error sending review notification:', error);
+    // Notify local listeners even if WebSocket fails
+    notifyReviewListeners({
+      type: 'new_review',
+      gameId,
+      review
+    });
+  }
+}
+
+// Subscribe to new review events
+export async function onNewReview(callback) {
+  // Ensure WebSocket connection is established
+  try {
+    await ensureWebSocketConnection();
+  } catch (error) {
+    console.warn('Could not establish WebSocket connection for review notifications:', error);
+    // Continue anyway - local notifications will still work
+  }
+  
+  // Add the listener
+  reviewListeners.push(callback);
+  
+  // Return an unsubscribe function
+  return () => {
+    const index = reviewListeners.indexOf(callback);
+    if (index !== -1) {
+      reviewListeners.splice(index, 1);
+    }
+  };
+}
+
+// Notify all review listeners
+function notifyReviewListeners(event) {
+  reviewListeners.forEach(listener => {
+    try {
+      listener(event);
+    } catch (error) {
+      console.error('Error in review listener:', error);
+    }
   });
 } 
