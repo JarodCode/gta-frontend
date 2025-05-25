@@ -4,451 +4,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base href="/">
-    <title>Game Review App</title>
+    <title>GameTrackr - Track Your Gaming Journey</title>
+    <meta name="description" content="Track, rate, and review your gaming journey with GameTrackr - your personal video game diary.">
+    <!-- Use global.css for consistent styling across all pages -->
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/main.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <h1><a href="index.html">GameRevu</a></h1>
-                </div>
-                <nav>
-                    <ul>
-                        <li><a href="index.html" class="active nav-link">Home</a></li>
-                        <li><a href="pages/games/list.html" class="nav-link">Games</a></li>
-                        <li><a href="pages/developers.html" class="nav-link">Developers</a></li>
-                        <li><a href="pages/publishers.html" class="nav-link">Publishers</a></li>
-                        <li><a href="pages/genres.html" class="nav-link">Genres</a></li>
-                        <li><a href="pages/news.html" class="nav-link">News</a></li>
-                        <li><a href="pages/about.html" class="nav-link">About</a></li>
-                    </ul>
-                </nav>
-                <div id="user-controls">
-                    <button id="login-button" class="button">Login</button>
-                    <div id="user-menu" style="display: none;">
-                        <span id="username" class="neon-text">User</span>
-                        <button id="logout-button" class="button button-small">Logout</button>
-                        <a href="pages/profile/index.html" class="button button-small">Profile</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    <!-- Header will be inserted here -->
+    <div id="header-container"></div>
 
     <div class="hero">
-        <div class="hero-content">
-            <h2>Discover & Review Games</h2>
-            <p>Find your next favorite game and share your experience with the community.</p>
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search for games...">
-                <button id="search-button" class="button">Search</button>
-            </div>
-        </div>
-    </div>
-
-    <main>
-        <section class="featured-games">
-            <h2>Featured Games</h2>
-            <div class="loading-message">Loading featured games...</div>
-            <div class="games-container" id="featured-games">
-                <!-- Games will be loaded here -->
-            </div>
-        </section>
-
-        <section class="cta-section">
-            <div class="cta-content">
-                <h2>Join Our Community</h2>
-                <p>Create an account to rate games, leave reviews, and join discussions.</p>
-                <button class="button button-large" id="signup-cta">Sign Up Now</button>
-            </div>
-        </section>
-    </main>
-
-    <footer>
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>GameRevu</h3>
-                    <p>Your source for honest game reviews and community discussions.</p>
+            <div class="hero-content">
+                <h2>Track Your Gaming Journey</h2>
+                <p>Rate, review, and catalog your gaming experiences. Find your next adventure.</p>
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search for games...">
+                    <button id="search-button" class="btn btn-accent">Search</button>
                 </div>
-                <div class="footer-section">
-                    <h3>Links</h3>
-                    <ul>
-                        <li><a href="pages/about.html">About Us</a></li>
-                        <li><a href="pages/privacy.html">Privacy Policy</a></li>
-                        <li><a href="pages/terms.html">Terms of Service</a></li>
-                        <li><a href="pages/contact.html">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Connect</h3>
-                    <div class="social-links">
-                        <a href="#" class="social-link">Twitter</a>
-                        <a href="#" class="social-link">Facebook</a>
-                        <a href="#" class="social-link">Instagram</a>
-                        <a href="#" class="social-link">Discord</a>
+                <div class="auth-buttons" id="hero-auth-buttons">
+                    <div id="hero-unauthenticated" style="display: flex;">
+                        <a href="/pages/login/index.html" id="hero-login-button" class="button button-sm button-outline">Log In</a>
+                        <a href="/pages/register/index.html" id="hero-register-button" class="button button-sm button-primary">Sign Up</a>
+                    </div>
+                    <div id="hero-authenticated" style="width: 100%; display: flex; justify-content: center; align-items: center;">
+                        <span id="hero-username-display">Welcome, test37!</span>
                     </div>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2023 GameRevu. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Login</h2>
-            <div id="login-error" class="error-message" style="display: none;"></div>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="login-username">Username</label>
-                    <input type="text" id="login-username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password" required>
-                </div>
-                <button type="submit" class="button button-full">Login</button>
-            </form>
-            <p class="form-footer">Don't have an account? <a href="#" id="signup-link">Sign up</a></p>
         </div>
     </div>
 
-    <div id="signup-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Sign Up</h2>
-            <div id="signup-error" class="error-message" style="display: none;"></div>
-            <form id="signup-form">
-                <div class="form-group">
-                    <label for="signup-username">Username</label>
-                    <input type="text" id="signup-username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="signup-email">Email</label>
-                    <input type="email" id="signup-email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="signup-password">Password</label>
-                    <input type="password" id="signup-password" name="password" required>
-                </div>
-                <div class="form-group">
-                    <label for="confirm-password">Confirm Password</label>
-                    <input type="password" id="confirm-password" name="confirm-password" required>
-                </div>
-                <button type="submit" class="button button-full">Sign Up</button>
-            </form>
-            <p class="form-footer">Already have an account? <a href="#" id="login-link">Login</a></p>
-        </div>
-    </div>
+    <main class="container">
+        <!-- Featured games section removed -->
+        <!-- Top rated games section removed -->
+    </main>
 
-    <script src="./js/api.js"></script>
+    <!-- Application scripts -->
     <script>
-        // Add debugging for imports to see if they're loading correctly
-        window.addEventListener('error', function(event) {
-            console.error('Script error detected:', event.filename, event.message);
-        });
-        
-        console.log('Loading app modules...');
-        // Use relative paths and import from auth instead of mock-auth
-        import { fetchGames, transformGameData } from './js/api.js';
-        import { login, register, logout, getCurrentUser, getCurrentUserFromServer } from './js/auth.js';
-        import { getGamesSortedByUserRating } from './js/reviews.js';
-        
-        console.log('App modules loaded successfully');
-        
-        // Global cache for featured games
-        let featuredGamesCache = {
-            data: null,
-            timestamp: 0,
-            expiry: 24 * 60 * 60 * 1000 // 24 hours
-        };
-        
-        // Function to check if a user is logged in and update the UI
-        function checkLoginStatus() {
-            const user = getCurrentUser();
-            const loginButton = document.getElementById('login-button');
-            const userMenu = document.getElementById('user-menu');
-            const username = document.getElementById('username');
-
-            if (user) {
-                loginButton.style.display = 'none';
-                userMenu.style.display = 'block';
-                username.textContent = user.username;
-                
-                // Verify token with server and get fresh user data
-                getCurrentUserFromServer().catch(error => {
-                    console.error('Token validation failed:', error);
-                    // If token validation fails, logout will be called inside getCurrentUserFromServer
-                    checkLoginStatus();
-                });
+        // Simple non-module script to check auth status
+        function checkHeroAuthStatus() {
+            console.log('Checking hero section auth status');
+            const hasToken = !!localStorage.getItem('authToken');
+            const userData = localStorage.getItem('currentUser');
+            
+            const heroUnauthenticated = document.getElementById('hero-unauthenticated');
+            const heroAuthenticated = document.getElementById('hero-authenticated');
+            const heroUsernameDisplay = document.getElementById('hero-username-display');
+            
+            console.log('Hero auth check - Token exists:', hasToken);
+            console.log('Hero auth check - User data exists:', !!userData);
+            
+            if (hasToken && userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    console.log('User is authenticated as:', user.username);
+                    
+                    if (heroUnauthenticated) heroUnauthenticated.style.display = 'none';
+                    if (heroAuthenticated) heroAuthenticated.style.display = 'flex';
+                    if (heroUsernameDisplay) {
+                        heroUsernameDisplay.textContent = `Welcome, ${user.username}!`;
+                    }
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    showHeroUnauthenticatedUI();
+                }
             } else {
-                loginButton.style.display = 'block';
-                userMenu.style.display = 'none';
+                showHeroUnauthenticatedUI();
             }
         }
-
-        // Check login status when the page loads
-        document.addEventListener('DOMContentLoaded', async () => {
-            checkLoginStatus();
+        
+        function showHeroUnauthenticatedUI() {
+            console.log('Showing hero unauthenticated UI');
+            const heroUnauthenticated = document.getElementById('hero-unauthenticated');
+            const heroAuthenticated = document.getElementById('hero-authenticated');
             
-            // Always use hardcoded data now
-            console.log('Fetching featured games from hardcoded data');
+            if (heroUnauthenticated) heroUnauthenticated.style.display = 'flex';
+            if (heroAuthenticated) heroAuthenticated.style.display = 'none';
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Home page initialization started');
             
-            // Fetch featured games
-            const data = await fetchGames({
-                pageSize: 100,
-                ordering: '-rating'  // Sort by user ratings instead of metacritic
-            });
-            
-            // Transform the data
-            const games = data.results.map(game => transformGameData(game));
-            
-            // Display the games
-            const featuredGamesContainer = document.getElementById('featured-games');
-            featuredGamesContainer.innerHTML = '';
-            
-            // Enhance games with user ratings
-            function enhanceGamesWithUserRatings(games) {
-                // Get all game ratings from localStorage
-                const gameRatings = JSON.parse(localStorage.getItem('gameRatings') || '{}');
-                
-                console.log('User ratings in database:', Object.keys(gameRatings).length);
-                
-                // Enhance each game with its user rating
-                return games.map(game => {
-                    const gameId = game.id.toString();
-                    const ratingData = gameRatings[gameId] || { rating: 0, count: 0 };
+            // Load header component
+            fetch('/components/header.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('header-container').innerHTML = data;
                     
-                    return {
-                        ...game,
-                        user_rating: ratingData.rating || 0,
-                        user_rating_count: ratingData.count || 0
-                    };
+                    // Execute any scripts in the header component
+                    const scripts = document.getElementById('header-container').querySelectorAll('script');
+                    scripts.forEach(script => {
+                        const newScript = document.createElement('script');
+                        Array.from(script.attributes).forEach(attr => {
+                            newScript.setAttribute(attr.name, attr.value);
+                        });
+                        newScript.appendChild(document.createTextNode(script.innerHTML));
+                        script.parentNode.replaceChild(newScript, script);
+                    });
+                    
+                    // Check hero section auth status AFTER header loaded
+                    setTimeout(checkHeroAuthStatus, 100);
+                })
+                .catch(error => console.error('Error loading header component:', error));
+            
+            // Set up search functionality
+            const searchButton = document.getElementById('search-button');
+            if (searchButton) {
+                searchButton.addEventListener('click', function() {
+                    const searchInput = document.getElementById('search-input');
+                    if (searchInput && searchInput.value.trim()) {
+                        window.location.href = `/pages/games/list.html?search=${encodeURIComponent(searchInput.value.trim())}`;
+                    }
                 });
             }
             
-            // Enhance games with user ratings
-            const enhancedGames = enhanceGamesWithUserRatings(games);
-            
-            // Sort by user ratings (games with ratings at top)
-            enhancedGames.sort((a, b) => {
-                // If both have user ratings, compare them
-                if (a.user_rating_count > 0 && b.user_rating_count > 0) {
-                    return b.user_rating - a.user_rating;
-                }
-                // If only a has user ratings, it comes first
-                if (a.user_rating_count > 0) return -1;
-                // If only b has user ratings, it comes first
-                if (b.user_rating_count > 0) return 1;
-                // If neither has user ratings, sort alphabetically
-                return a.name.localeCompare(b.name);
-            });
-            
-            // Filter games that have user ratings
-            const gamesWithRatings = enhancedGames.filter(game => game.user_rating_count > 0);
-            
-            // If we have games with user ratings, show those, otherwise show random 5 games
-            const displayGames = gamesWithRatings.length > 0 
-                ? gamesWithRatings.slice(0, 5) 
-                : enhancedGames.slice(0, 5);
-            
-            console.log('Featured games to display:', displayGames.map(g => 
-                `${g.name} - User: ${g.user_rating}/${g.user_rating_count}`
-            ));
-            
-            // Hide loading message
-            document.querySelector('.loading-message').style.display = 'none';
-            
-            // Display the featured games
-            displayFeaturedGames(displayGames);
-            
-            // Event listener for the search button
-            document.getElementById('search-button').addEventListener('click', () => {
-                const searchTerm = document.getElementById('search-input').value.trim();
-                if (searchTerm) {
-                    window.location.href = `pages/games/list.html?search=${encodeURIComponent(searchTerm)}`;
-                }
-            });
-            
-            // Event listener for the search input (submit on Enter)
-            document.getElementById('search-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const searchTerm = e.target.value.trim();
-                    if (searchTerm) {
-                        window.location.href = `pages/games/list.html?search=${encodeURIComponent(searchTerm)}`;
+            // Allow searching with Enter key
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && searchInput.value.trim()) {
+                        window.location.href = `/pages/games/list.html?search=${encodeURIComponent(searchInput.value.trim())}`;
                     }
-                }
-            });
-
-            // Login and Signup Modal functionality
-            const loginModal = document.getElementById('login-modal');
-            const signupModal = document.getElementById('signup-modal');
-            const loginButton = document.getElementById('login-button');
-            const signupCta = document.getElementById('signup-cta');
-            const closeButtons = document.querySelectorAll('.close-button');
-            const loginLink = document.getElementById('login-link');
-            const signupLink = document.getElementById('signup-link');
-            const logoutButton = document.getElementById('logout-button');
-
-            loginButton.addEventListener('click', () => {
-                loginModal.style.display = 'block';
-            });
-
-            signupCta.addEventListener('click', () => {
-                signupModal.style.display = 'block';
-            });
-
-            closeButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    loginModal.style.display = 'none';
-                    signupModal.style.display = 'none';
-                });
-            });
-
-            loginLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                signupModal.style.display = 'none';
-                loginModal.style.display = 'block';
-            });
-
-            signupLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                loginModal.style.display = 'none';
-                signupModal.style.display = 'block';
-            });
-
-            logoutButton.addEventListener('click', () => {
-                logout();
-                checkLoginStatus();
-            });
-
-            // Close modals when clicking outside
-            window.addEventListener('click', (e) => {
-                if (e.target === loginModal) {
-                    loginModal.style.display = 'none';
-                }
-                if (e.target === signupModal) {
-                    signupModal.style.display = 'none';
-                }
-            });
-
-            // Handle login form submission
-            document.getElementById('login-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const username = document.getElementById('login-username').value;
-                const password = document.getElementById('login-password').value;
-                const errorElement = document.getElementById('login-error');
-                
-                // Hide any previous error
-                errorElement.style.display = 'none';
-                
-                console.log('Login attempt for:', username);
-                
-                try {
-                    console.log('Making login API request...');
-                    await login({ username, password });
-                    console.log('Login successful!');
-                    loginModal.style.display = 'none';
-                    checkLoginStatus();
-                } catch (error) {
-                    console.error('Login API error:', error);
-                    // Display error message
-                    errorElement.textContent = error.message;
-                    errorElement.style.display = 'block';
-                }
-            });
-
-            // Handle signup form submission
-            document.getElementById('signup-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const username = document.getElementById('signup-username').value;
-                const email = document.getElementById('signup-email').value;
-                const password = document.getElementById('signup-password').value;
-                const confirmPassword = document.getElementById('confirm-password').value;
-                const errorElement = document.getElementById('signup-error');
-                
-                // Hide any previous error
-                errorElement.style.display = 'none';
-                
-                console.log('Register attempt for:', username, email);
-                
-                // Basic validation
-                if (password !== confirmPassword) {
-                    errorElement.textContent = 'Passwords do not match!';
-                    errorElement.style.display = 'block';
-                    return;
-                }
-                
-                try {
-                    console.log('Making register API request...');
-                    await register({ username, email, password });
-                    console.log('Registration successful!');
-                    signupModal.style.display = 'none';
-                    checkLoginStatus();
-                } catch (error) {
-                    console.error('Registration API error:', error);
-                    // Display error message
-                    errorElement.textContent = error.message;
-                    errorElement.style.display = 'block';
-                }
-            });
-
-            // Function to display featured games with proper image handling
-            function displayFeaturedGames(games) {
-                if (!games || games.length === 0) {
-                    featuredGamesContainer.innerHTML = '<div class="error">No featured games available.</div>';
-                    return;
-                }
-                
-                // Clear the container
-                featuredGamesContainer.innerHTML = '';
-                
-                // Create a game card for each game
-                games.forEach(game => {
-                    const gameCard = document.createElement('div');
-                    gameCard.className = 'game-card';
-                    
-                    // Handle user ratings display
-                    const ratingHTML = game.user_rating_count > 0 
-                        ? `<div class="game-rating">
-                            <span class="stars">${'★'.repeat(Math.round(game.user_rating))}</span>
-                            <span class="rating-value">${game.user_rating.toFixed(1)}</span>
-                            <span class="rating-count">(${game.user_rating_count} ${game.user_rating_count === 1 ? 'review' : 'reviews'})</span>
-                          </div>`
-                        : '';
-                    
-                    // Check for missing game cover image and provide fallback
-                    const imageContent = game.background_image 
-                        ? `<img src="${game.background_image}" alt="${game.name}" loading="lazy" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'game-icon-container\\'><i class=\\'game-icon\\'></i></div>';">` 
-                        : `<div class="game-icon-container"><i class="game-icon"></i></div>`;
-                    
-                    // Get a short description (first 120 characters)
-                    const shortDescription = game.description_raw 
-                        ? game.description_raw.substring(0, 120) + (game.description_raw.length > 120 ? '...' : '')
-                        : 'No description available';
-                    
-                    gameCard.innerHTML = `
-                        <a href="pages/games/index.html?id=${game.id}">
-                            ${imageContent}
-                            <div class="game-content">
-                                <h3>${game.name}</h3>
-                                <p class="developer">${game.developers && game.developers.length > 0 ? game.developers[0].name : 'Unknown Developer'}</p>
-                                ${ratingHTML}
-                                <p class="description">${shortDescription}</p>
-                            </div>
-                        </a>
-                    `;
-                    
-                    featuredGamesContainer.appendChild(gameCard);
                 });
             }
         });

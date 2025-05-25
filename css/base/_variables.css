@@ -1,0 +1,106 @@
+/**
+ * CSS Variables - GameRevu Application
+ * 
+ * This file contains all CSS variables used throughout the application.
+ * Centralizing the variables makes it easier to maintain a consistent theme.
+ */
+
+:root {
+  /**
+   * Color Palette
+   * These variables define the main colors used throughout the application.
+   * The palette is designed around a cyberpunk gaming theme with neon accents.
+   */
+  --primary-color: #00eeff;       /* Neon cyan - Primary accent color */
+  --primary-rgb: 0, 238, 255;     /* RGB values for primary color */
+  --primary-hover: #66f4ff;       /* Lighter cyan - Hover state for primary elements */
+  --secondary-color: #ff00e6;     /* Neon pink - Secondary accent color */
+  --secondary-rgb: 255, 0, 230;   /* RGB values for secondary color */
+  --accent-color: #7b4cff;        /* Neon purple - For highlights and special elements */
+  --accent-rgb: 123, 76, 255;     /* RGB values for accent color */
+  --success-color: #00ffaa;       /* Neon green - For success messages and indicators */
+  --error-color: #ff3c5a;         /* Neon red - For error messages and indicators */
+  --warning-color: #ffcc00;       /* Neon yellow - For warning messages and indicators */
+  
+  /**
+   * Background Colors
+   * Defines the various background colors used for different UI elements.
+   */
+  --bg-dark: #0a0e17;             /* Very dark blue - Main background */
+  --bg-medium: #151c28;           /* Dark blue - Secondary background */
+  --bg-light: #1e2738;            /* Medium dark blue - Lighter elements */
+  --bg-card: #1a1f2e;             /* Card background - For cards and raised elements */
+  
+  /**
+   * Text Colors
+   * Defines the colors used for text throughout the application.
+   */
+  --text-primary: #ffffff;        /* White - Main text color */
+  --text-secondary: #b8c0d0;      /* Light gray - Secondary text color */
+  --text-muted: #6c7a94;          /* Muted blue-gray - Less important text */
+  
+  /**
+   * Borders & Visual Effects
+   * Defines colors and effects for borders, shadows, and glows.
+   */
+  --border-color: #2a3040;        /* Dark border color */
+  --glow-color: rgba(0, 238, 255, 0.6); /* Cyan glow effect */
+  --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); /* Standard shadow */
+  --neon-shadow: 0 0 10px var(--glow-color); /* Neon glow effect */
+  
+  /**
+   * Typography
+   * Defines the font families used throughout the application.
+   */
+  --font-main: 'Rajdhani', 'Segoe UI', Roboto, sans-serif; /* Main body text */
+  --font-heading: 'Orbitron', 'Rajdhani', sans-serif; /* Headings */
+  --font-code: 'JetBrains Mono', monospace; /* Code blocks or monospace text */
+  
+  /**
+   * Spacing
+   * Consistent spacing values for margins, paddings, and gaps.
+   */
+  --space-xs: 0.25rem;  /* 4px - Extra small spacing */
+  --space-sm: 0.5rem;   /* 8px - Small spacing */
+  --space-md: 1rem;     /* 16px - Medium spacing (base) */
+  --space-lg: 1.5rem;   /* 24px - Large spacing */
+  --space-xl: 2rem;     /* 32px - Extra large spacing */
+  --space-xxl: 3rem;    /* 48px - Double extra large spacing */
+  
+  /**
+   * Border Radius
+   * Consistent rounding for elements.
+   */
+  --radius-sm: 4px;     /* Small rounded corners */
+  --radius-md: 8px;     /* Medium rounded corners */
+  --radius-lg: 12px;    /* Large rounded corners */
+  --radius-pill: 9999px; /* Pill shape (fully rounded) */
+  
+  /**
+   * Z-index Layers
+   * Consistent z-index values to manage stacking context.
+   */
+  --z-base: 1;          /* Base layer */
+  --z-dropdown: 1000;   /* Dropdowns */
+  --z-sticky: 1010;     /* Sticky elements */
+  --z-modal: 1020;      /* Modal dialogs */
+  --z-tooltip: 1030;    /* Tooltips and popovers */
+  --z-toast: 1040;      /* Toast notifications */
+  
+  /**
+   * Transitions
+   * Consistent transition timing for animations.
+   */
+  --transition-fast: 0.2s ease;   /* Fast transitions */
+  --transition-normal: 0.3s ease; /* Normal transitions */
+  --transition-slow: 0.5s ease;   /* Slow transitions */
+  
+  /**
+   * Container Widths
+   * Maximum widths for container elements.
+   */
+  --container-sm: 640px;   /* Small container */
+  --container-md: 960px;   /* Medium container */
+  --container-lg: 1120px;  /* Large container */
+  --container-xl: 1280px;  /* Extra large container */
+} 

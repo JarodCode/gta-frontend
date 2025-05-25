@@ -802,21 +802,6 @@ export const topGames = [
     description: "Mass Effect is an action role-playing game set in a science fiction universe. The game follows Commander Shepard, an elite human soldier who must save the galaxy from a race of powerful mechanical beings known as the Reapers."
   },
   {
-    id: 3612,
-    name: "Hotline Miami",
-    released: "2012-10-23",
-    background_image: "https://media.rawg.io/media/games/9fa/9fa63622543e5d4f6d99aa9d73b759ac.jpg",
-    metacritic: 85,
-    genres: [{ id: 4, name: "Action" }, { id: 51, name: "Indie" }, { id: 2, name: "Shooter" }],
-    platforms: [
-      { platform: { id: 1, name: "PC" } },
-      { platform: { id: 18, name: "PlayStation 4" } }
-    ],
-    developers: [{ id: 3873, name: "Dennaton Games" }],
-    publishers: [{ id: 3694, name: "Devolver Digital" }],
-    description: "Hotline Miami is a high-octane top-down shooter set in 1989 Miami. The game blends brutal violence with surreal storytelling as players don animal masks and embark on killing sprees at the behest of mysterious phone messages."
-  },
-  {
     id: 5525,
     name: "Metro 2033",
     released: "2010-03-16",
@@ -949,6 +934,21 @@ export const topGames = [
     developers: [{ id: 955, name: "Insomniac Games" }],
     publishers: [{ id: 369, name: "Sony Interactive Entertainment" }],
     description: "Marvel's Spider-Man is an open-world action-adventure game that puts players in control of Spider-Man as he fights crime in Manhattan, battling iconic villains while dealing with his dual life as Peter Parker."
+  },
+  {
+    id: 3612,
+    name: "Hotline Miami",
+    released: "2012-10-23",
+    background_image: "https://media.rawg.io/media/games/9fa/9fa63622543e5d4f6d99aa9d73b759ac.jpg",
+    metacritic: 85,
+    genres: [{ id: 4, name: "Action" }, { id: 51, name: "Indie" }, { id: 2, name: "Shooter" }],
+    platforms: [
+      { platform: { id: 1, name: "PC" } },
+      { platform: { id: 18, name: "PlayStation 4" } }
+    ],
+    developers: [{ id: 3873, name: "Dennaton Games" }],
+    publishers: [{ id: 3694, name: "Devolver Digital" }],
+    description: "Hotline Miami is a high-octane top-down shooter set in 1989 Miami. The game blends brutal violence with surreal storytelling as players don animal masks and embark on killing sprees at the behest of mysterious phone messages."
   }
 ];
 
@@ -956,7 +956,15 @@ export const topGames = [
  * Returns the full list of hardcoded games
  */
 export function getHardcodedGames() {
-  return [...topGames]; // Return a copy to prevent modification of the original
+  // Filter out specific games that we want to remove
+  const gamesToRemove = [
+    "Apex Legends",
+    "Hotline Miami",
+    "The Elder Scrolls IV: Oblivion",
+    "The Witcher 2: Assassins of Kings"
+  ];
+  
+  return topGames.filter(game => !gamesToRemove.includes(game.name));
 }
 
 /**
@@ -967,7 +975,7 @@ export function getHardcodedGames() {
 export function getGamesLikeApi(options = {}) {
   console.log('Getting hardcoded games with options:', options);
   
-  // Get all games
+  // Get all games (already filtered in getHardcodedGames)
   const allGames = getHardcodedGames();
   
   // Filter games based on search term
@@ -985,6 +993,28 @@ export function getGamesLikeApi(options = {}) {
     const genreIds = options.genres.split(',').map(id => parseInt(id.trim(), 10));
     filteredGames = filteredGames.filter(game => 
       game.genres && game.genres.some(genre => genreIds.includes(genre.id))
+    );
+  }
+  
+  // Filter by developers if specified
+  if (options.developers) {
+    const developerIds = Array.isArray(options.developers) 
+      ? options.developers.map(id => parseInt(id, 10)) 
+      : [parseInt(options.developers, 10)];
+    
+    filteredGames = filteredGames.filter(game => 
+      game.developers && game.developers.some(dev => developerIds.includes(dev.id))
+    );
+  }
+  
+  // Filter by publishers if specified
+  if (options.publishers) {
+    const publisherIds = Array.isArray(options.publishers) 
+      ? options.publishers.map(id => parseInt(id, 10)) 
+      : [parseInt(options.publishers, 10)];
+    
+    filteredGames = filteredGames.filter(game => 
+      game.publishers && game.publishers.some(pub => publisherIds.includes(pub.id))
     );
   }
   

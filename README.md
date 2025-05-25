@@ -1,37 +1,80 @@
-# GameBoxd
+# GameTrackr Frontend
 
-GameBoxd est une application web inspirée de Letterboxd, mais dédiée aux jeux
-vidéo. Elle permet aux utilisateurs de noter, critiquer et cataloguer leurs jeux
-préférés.
+GameTrackr est une plateforme web inspirée de Letterboxd, dédiée aux jeux vidéo. Ce dépôt contient le frontend de l'application, développé en HTML, CSS et JavaScript pur sans framework.
 
-## Fonctionnalités principales
+## Fonctionnalités
 
-- Parcourir une base de données de jeux vidéo.
-- Ajouter des critiques, des notes et des listes personnalisées.
-- Interface responsive en HTML/CSS/JavaScript pur.
-- Serveur statique en Deno (aucun framework utilisé).
+- Interface utilisateur complète et responsive
+- Parcourir et rechercher une base de données de jeux vidéo
+- Système de notation et critiques de jeux
+- Authentification sécurisée avec JWT
+- Communication avec l'API backend via Fetch API
 
-## Lancement du projet
+## Prérequis
+
+- [Deno](https://deno.land/) v1.44 ou supérieur
+- Navigateur web moderne (Chrome, Firefox, Edge, Safari)
+
+## Installation
 
 1. Cloner le dépôt :
    ```bash
-   git clone https://github.com/jarodCode/gta-frontend.git
+   git clone https://github.com/votre-utilisateur/gametrackr-frontend.git
+   cd gametrackr-frontend
    ```
 
-2. Lancer un serveur local avec Deno :
+2. Copier le fichier d'environnement exemple :
    ```bash
-   deno task dev
+   cp .env.example .env
    ```
 
-## Arborescence du projet
+3. Configurer les variables d'environnement dans le fichier `.env`
 
-- `index.html` — Page d'accueil
-- `style.css` — Feuille de style principale
-- `app.js` — Logique de l'application
-- `main.js` — Serveur Deno pour héberger les fichiers statiques
+## Lancement du serveur de développement
 
-## À venir
+```bash
+deno task dev
+```
 
-- Authentification utilisateur
-- Intégration d'une API de jeux
-- Système de commentaires
+Par défaut, le serveur démarre sur le port 3000. Vous pouvez accéder à l'application à l'adresse [http://localhost:3000](http://localhost:3000).
+
+## Structure du projet
+
+- `index.html` — Page d'accueil de l'application
+- `components/` — Composants HTML réutilisables (header, footer, etc.)
+- `pages/` — Pages de l'application (jeux, profil, login, etc.)
+- `css/` — Feuilles de style CSS
+  - `global.css` — Styles globaux et variables
+  - `components/` — Styles spécifiques aux composants
+- `js/` — Scripts JavaScript
+  - `api/` — Modules de communication avec l'API
+  - `utils/` — Fonctions utilitaires
+- `images/` — Ressources graphiques
+- `data/` — Données locales (utilisateurs, critiques, etc.)
+- `server.js` — Serveur Deno pour le développement
+
+## Fonctionnalités principales
+
+### Authentification
+- Inscription et connexion des utilisateurs
+- Gestion des sessions avec JWT
+- Protection des routes nécessitant une authentification
+
+### Catalogue de jeux
+- Recherche et filtrage des jeux
+- Affichage détaillé des informations de jeux
+- Tri par popularité, date de sortie, etc.
+
+### Système de critiques
+- Notation des jeux (de 1 à 5 étoiles)
+- Rédaction de critiques textuelles
+- Consultation des critiques d'autres utilisateurs
+
+### Profil utilisateur
+- Affichage des jeux notés
+- Statistiques personnelles
+- Gestion des informations du compte
+
+
+
+

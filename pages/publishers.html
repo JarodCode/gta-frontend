@@ -3,114 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Publishers | Game Reviews</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Game Publishers | Gameboxd</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Load app.js as a regular script instead of a module to avoid MIME type issues -->
-    <script src="../js/app.js"></script>
+    <style>
+        /* Inline critical styles to avoid FOUC */
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(var(--bg-medium-rgb), 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .catalog-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .catalog-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .catalog-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        .catalog-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .catalog-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+        }
+        
+        .catalog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(var(--primary-rgb), 0.2);
+            border-color: rgba(var(--primary-rgb), 0.3);
+        }
+        
+        .catalog-card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .catalog-card-title {
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem;
+            line-height: 1.4;
+            font-family: var(--font-heading);
+        }
+        
+        .catalog-card-title a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .catalog-card-title a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 8px var(--glow-color);
+            text-decoration: none;
+        }
+        
+        .catalog-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        
+        .catalog-card-count {
+            background-color: var(--bg-medium);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border: 1px solid rgba(var(--primary-rgb), 0.2);
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            grid-column: 1 / -1;
+        }
+        
+        .no-results-icon {
+            font-size: 3rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        
+        .no-results-text {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 768px) {
+            .catalog-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .catalog-title {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .catalog-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <a href="../index.html">Game Library</a>
-                </div>
-                <nav>
-                    <ul>
-                        <li><a href="../index.html">Home</a></li>
-                        <li><a href="games/list.html">Games</a></li>
-                        <li><a href="developers.html">Developers</a></li>
-                        <li><a href="publishers.html" class="active">Publishers</a></li>
-                        <li><a href="genres.html">Genres</a></li>
-                        <li id="auth-links">
-                            <a href="login/index.html">Login</a>
-                            <a href="register/index.html">Register</a>
-                        </li>
-                        <li id="user-menu" style="display: none;">
-                            <button id="user-menu-button">
-                                <span id="username-display">User</span>
-                                <span class="dropdown-arrow">▼</span>
-                            </button>
-                            <div id="user-dropdown" class="dropdown-menu">
-                                <a href="profile.html">Profile</a>
-                                <a href="#" id="logout-button">Logout</a>
-                            </div>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </header>
+    <!-- Include the header component -->
+    <div id="header-container"></div>
 
-    <main class="container">
-        <h1>Game Publishers</h1>
-        <div id="loading-indicator" class="loading">
-            <i class="fas fa-spinner fa-spin"></i> Loading publishers...
+    <main class="catalog-container">
+        <div class="catalog-header">
+            <h1 class="catalog-title">Game Publishers</h1>
+            <p class="catalog-subtitle">Browse through all game publishers and discover their games</p>
         </div>
-        <div id="publishers-list" class="card-container"></div>
+        
+        <div id="loading-indicator" class="loading-container">
+            <div class="loading-spinner"></div>
+        </div>
+        
+        <div id="publishers-list" class="catalog-grid"></div>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2023 Game Library. All rights reserved.</p>
-        </div>
-    </footer>
+    <!-- Footer will be inserted here -->
+    <div id="footer-container"></div>
 
     <script type="module">
         import { getHardcodedGames } from '../js/hardcoded-games.js';
-        import { getCurrentUser, logout } from '../js/mock-auth.js';
         
         document.addEventListener('DOMContentLoaded', () => {
-            setupUserMenu();
+            // Load header component
+            fetch('/components/header.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('header-container').innerHTML = data;
+                    
+                    // Execute any scripts in the header component
+                    const scripts = document.getElementById('header-container').querySelectorAll('script');
+                    scripts.forEach(script => {
+                        const newScript = document.createElement('script');
+                        Array.from(script.attributes).forEach(attr => {
+                            newScript.setAttribute(attr.name, attr.value);
+                        });
+                        newScript.appendChild(document.createTextNode(script.innerHTML));
+                        script.parentNode.replaceChild(newScript, script);
+                    });
+                    
+                    // Initialize auth functionality
+                    if (typeof checkLoginStatus === 'function') {
+                        checkLoginStatus();
+                    }
+                    
+                    // Remove duplicate mobile login and signup buttons
+                    setTimeout(() => {
+                        const mobileNavLinks = document.querySelectorAll('a.mobile-nav-link');
+                        mobileNavLinks.forEach(link => {
+                            if (link.textContent.includes('Log In') || link.textContent.includes('Sign Up')) {
+                                link.style.display = 'none';
+                            }
+                        });
+                    }, 100);
+                })
+                .catch(error => console.error('Error loading header component:', error));
+            
+            // Load footer component
+            fetch('/components/footer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('footer-container').innerHTML = data;
+                })
+                .catch(error => console.error('Error loading footer component:', error));
+            
             loadPublishers();
         });
-
-        function setupUserMenu() {
-            const user = getCurrentUser();
-            const authLinks = document.getElementById('auth-links');
-            const userMenu = document.getElementById('user-menu');
-            
-            if (user) {
-                // User is logged in
-                authLinks.style.display = 'none';
-                userMenu.style.display = 'block';
-                document.getElementById('username-display').textContent = user.username;
-                
-                // User menu dropdown toggle
-                const userMenuButton = document.getElementById('user-menu-button');
-                const userDropdown = document.getElementById('user-dropdown');
-                
-                userMenuButton.addEventListener('click', () => {
-                    userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
-                });
-                
-                // Close dropdown when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (e.target !== userMenuButton && !userMenuButton.contains(e.target)) {
-                        userDropdown.style.display = 'none';
-                    }
-                });
-                
-                // Logout functionality
-                document.getElementById('logout-button').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    logout();
-                    window.location.reload();
-                });
-            } else {
-                // User is not logged in
-                authLinks.style.display = 'block';
-                userMenu.style.display = 'none';
-            }
-        }
 
         function loadPublishers() {
             const loadingIndicator = document.getElementById('loading-indicator');
             const publishersListElement = document.getElementById('publishers-list');
             
             try {
-                loadingIndicator.style.display = 'block';
+                loadingIndicator.style.display = 'flex';
                 
                 // Get all games from our hardcoded list
                 const games = getHardcodedGames();
@@ -144,36 +274,47 @@
                 
                 if (publishersList.length > 0) {
                     const publisherCards = publishersList.map(publisher => `
-                        <div class="card">
-                            <div class="card-body">
-                                <h3 class="card-title">
-                                    <a href="publisher-details.html?id=${publisher.id}" data-publisher-id="${publisher.id}">
+                        <div class="catalog-card">
+                            <div class="catalog-card-body">
+                                <h3 class="catalog-card-title">
+                                    <a href="games/list.html?publisher=${publisher.id}">
                                         ${publisher.name}
                                     </a>
                                 </h3>
-                                <p>${publisher.gameCount} game${publisher.gameCount !== 1 ? 's' : ''}</p>
+                                <div class="catalog-card-meta">
+                                    <span class="catalog-card-count">
+                                        ${publisher.gameCount} game${publisher.gameCount !== 1 ? 's' : ''}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     `).join('');
                     
                     publishersListElement.innerHTML = publisherCards;
-                    
-                    // Add event listeners to publisher links
-                    document.querySelectorAll('[data-publisher-id]').forEach(link => {
-                        link.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            const publisherId = link.getAttribute('data-publisher-id');
-                            window.location.href = `publisher-details.html?id=${publisherId}`;
-                        });
-                    });
                 } else {
-                    publishersListElement.innerHTML = '<p>No publishers found.</p>';
+                    publishersListElement.innerHTML = `
+                        <div class="no-results">
+                            <div class="no-results-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <p class="no-results-text">No publishers found in the database.</p>
+                        </div>
+                    `;
                 }
+                
+                loadingIndicator.style.display = 'none';
             } catch (error) {
                 console.error('Error loading publishers:', error);
-                publishersListElement.innerHTML = '<p>Error loading publishers. Please try again later.</p>';
-            } finally {
+                
                 loadingIndicator.style.display = 'none';
+                publishersListElement.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <p class="no-results-text">Error loading publishers. Please try again later.</p>
+                    </div>
+                `;
             }
         }
     </script>

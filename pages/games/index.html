@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Details - Game Library</title>
-  <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="../../css/game-detail.css">
+  <title>Game Details - Gameboxd</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .user-menu {
       display: none;
       position: relative;
     }
     
-    .user-menu button {
       background: none;
       border: none;
       color: white;
@@ -23,11 +25,9 @@
       align-items: center;
     }
     
-    .user-menu button:hover {
       text-decoration: underline;
     }
     
-    .user-menu .dropdown {
       position: absolute;
       right: 0;
       top: 100%;
@@ -39,14 +39,12 @@
       display: none;
     }
     
-    .user-menu .dropdown a {
       display: block;
       padding: 10px 15px;
       color: #333;
       text-decoration: none;
     }
     
-    .user-menu .dropdown button {
       width: 100%;
       padding: 10px 15px;
       text-align: left;
@@ -54,8 +52,6 @@
       border-top: 1px solid #eee;
     }
     
-    .user-menu .dropdown a:hover, 
-    .user-menu .dropdown button:hover {
       background-color: #f5f5f5;
       text-decoration: none;
     }
@@ -114,6 +110,7 @@
       display: flex;
       gap: 2rem;
       align-items: flex-start;
+      margin-bottom: 2rem;
     }
 
     .game-cover {
@@ -134,11 +131,16 @@
 
     .game-info {
       flex-grow: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .game-info h1 {
-      font-size: 2.5rem;
-      margin: 0 0 1rem 0;
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      line-height: 1.3;
+      display: block;
+      width: 100%;
     }
 
     .game-info p {
@@ -168,25 +170,21 @@
     }
 
     .game-rating {
+      margin: 0.5rem 0 1.5rem 0;
       display: flex;
       align-items: center;
-      margin-top: 1rem;
+      gap: 1rem;
     }
 
-    .rating-value {
-      font-size: 2rem;
-      font-weight: bold;
-      margin-right: 0.5rem;
-    }
-
-    .rating-stars {
-      font-size: 1.5rem;
+    .stars {
+      display: inline-block;
       color: #f5c518;
+      font-size: 1.25rem;
+      letter-spacing: 3px;
     }
 
-    .rating-count {
-      margin-left: 1rem;
-      color: #666;
+    .rating-text {
+      color: var(--text-secondary);
       font-size: 0.9rem;
     }
 
@@ -259,6 +257,7 @@
       padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      color: #333;
     }
     
     .review-header {
@@ -270,10 +269,13 @@
     .review-user {
       display: flex;
       flex-direction: column;
+      color: #333;
+      font-weight: bold;
     }
     
     .username {
       font-weight: bold;
+      color: #333;
     }
     
     .review-date {
@@ -289,6 +291,7 @@
     .review-content {
       line-height: 1.5;
       white-space: pre-line;
+      color: #333;
     }
     
     .delete-review {
@@ -320,15 +323,23 @@
       margin-bottom: 1rem;
     }
     
-    .stars {
-      display: flex;
-      gap: 0.25rem;
-    }
-    
     .star {
       font-size: 1.5rem;
       color: #f5c518;
       cursor: pointer;
+      transition: transform 0.1s, color 0.2s;
+    }
+    
+    .star:hover {
+      transform: scale(1.2);
+    }
+    
+    .star-full, .star-active {
+      color: #f5c518;
+    }
+    
+    .star-empty {
+      color: #ddd;
     }
     
     .form-group {
@@ -381,7 +392,7 @@
     
     .tag-link:hover {
       text-decoration: underline;
-      color: #1a4da3;
+      color: #1a4bbc;
     }
     
     /* Add a small padding between tags */
@@ -415,101 +426,207 @@
       mask-size: contain;
       -webkit-mask-size: contain;
     }
+
+    .user-review-section {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .user-review-section h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      color: #333;
+    }
+    
+    .reviews-section {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .reviews-section h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      color: #333;
+      font-weight: bold;
+    }
+    
+    .reviews-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .reviews-container h3 {
+      color: #333;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    
+    .no-reviews {
+      background-color: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+      color: #666;
+      font-style: italic;
+    }
+
+    .back-link {
+      margin-bottom: var(--space-md);
+    }
+
+    .back-link a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: var(--transition-fast);
+    }
+
+    .back-link a:hover {
+      color: var(--primary-color);
+      text-shadow: 0 0 8px var(--glow-color);
+    }
+
+    /* Additional styles for game rating */
+    .game-rating {
+      margin: 0.5rem 0 1.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .stars {
+      display: inline-block;
+      color: #f5c518;
+      font-size: 1.25rem;
+      letter-spacing: 3px;
+    }
+    
+    .rating-text {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    /* Ensure the game title has proper spacing */
+    .game-info h1 {
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <div class="header-content">
-        <div class="logo">
-          <a href="../../index.html">Game Library</a>
-        </div>
-        <nav>
-          <ul>
-            <li><a href="../../index.html">Home</a></li>
-            <li><a href="list.html" class="active">Games</a></li>
-            <li id="auth-links">
-              <a href="../login/index.html">Login</a>
-              <a href="../register/index.html">Register</a>
-            </li>
-            <li id="user-menu" style="display: none;">
-              <button id="user-menu-button">
-                <span id="username-display">User</span>
-                <span class="dropdown-arrow">▼</span>
-              </button>
-              <div id="user-dropdown" class="dropdown-menu">
-                <a href="../profile.html">Profile</a>
-                <a href="#" id="logout-button">Logout</a>
-              </div>
-            </li>
-          </ul>
-        </nav>
+  <!-- Include header component -->
+  <div id="header-container"></div>
+
+  <main class="container py-4">
+    <div id="game-container" class="game-detail">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading game details...</p>
       </div>
     </div>
-  </header>
-
-  <main>
-    <section class="game-details">
-      <div class="container">
-        <div id="game-container">
-          <!-- Game details will be loaded here -->
-          <div class="loading">Loading game details...</div>
-        </div>
-      </div>
-    </section>
-
-    <section id="reviews-section" class="container">
-      <h2>User Reviews</h2>
-      <div id="game-rating" class="rating-display">
-        <!-- Rating will be loaded here -->
-      </div>
-
-      <div id="review-form-container">
-        <!-- Review form will be loaded here if user is logged in -->
-      </div>
-
-      <div id="game-reviews">
-        <!-- Reviews will be loaded here -->
-      </div>
-    </section>
   </main>
 
-  <footer>
-    <div class="container">
-      <p>&copy; 2023 Game Library. All rights reserved.</p>
-    </div>
-  </footer>
-  
+  <!-- Include footer component -->
+  <div id="footer-container"></div>
+
   <script type="module">
+    // Import required modules
     import { fetchGameDetails, fetchGameScreenshots } from '../../js/api.js';
-    import { getCurrentUser, logout } from '../../js/auth.js';
-    import { getGameReviews, addReview, deleteReview, getGameRating, onNewReview } from '../../js/reviews.js';
+    import { getCurrentUser, logout, isAuthenticated } from '../../js/api/auth.js';
+    import { getGameReviews, addReview, deleteReview, getGameRating, onNewReview, fetchGameReviews } from '../../js/reviews.js';
     
-    // Function to check if user is logged in
-    function checkLoginStatus() {
-      const user = getCurrentUser();
-      const authLinks = document.getElementById('auth-links');
-      const userMenu = document.getElementById('user-menu');
-      
-      if (user) {
-        // User is logged in
-        if (authLinks) authLinks.style.display = 'none';
-        if (userMenu) {
-          userMenu.style.display = 'block';
-          const usernameDisplay = document.getElementById('username-display');
-          if (usernameDisplay) {
-            usernameDisplay.textContent = user.username;
+    // DOM elements
+    const gameDetailContainer = document.getElementById('game-detail');
+    let userMenuButton = null;
+    
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Load header and footer components
+      fetch('/components/header.html')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to load header component');
           }
-        }
-        return true;
+          return response.text();
+        })
+        .then(data => {
+          document.getElementById('header-container').innerHTML = data;
+          // Get menu button after header is loaded
+          userMenuButton = document.getElementById('user-menu-button');
+          
+          // Remove login and signup buttons from mobile navigation
+          setTimeout(() => {
+            const mobileNavLinks = document.querySelectorAll('a.mobile-nav-link');
+            mobileNavLinks.forEach(link => {
+              if (link.textContent.includes('Log In') || link.textContent.includes('Sign Up')) {
+                link.style.display = 'none';
+              }
+            });
+          }, 100);
+          
+          // User menu dropdown toggle
+          const userDropdown = document.getElementById('user-dropdown');
+          
+          if (userMenuButton) {
+            userMenuButton.addEventListener('click', (e) => {
+              userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+            });
+          }
+          
+          // Close dropdown when clicking outside
+          document.addEventListener('click', (e) => {
+            if (userMenuButton && e.target !== userMenuButton && !userMenuButton.contains(e.target)) {
+              if (userDropdown) {
+                userDropdown.style.display = 'none';
+              }
+            }
+          });
+          
+          // Handle logout
+          document.getElementById('logout-button')?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            await logout();
+            window.location.reload();
+          });
+        })
+        .catch(error => {
+          console.error('Error loading header:', error);
+        });
+      
+      fetch('/components/footer.html')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to load footer component');
+          }
+          return response.text();
+        })
+        .then(data => {
+          document.getElementById('footer-container').innerHTML = data;
+        })
+        .catch(error => {
+          console.error('Error loading footer:', error);
+        });
+        
+      // Get game ID from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const gameId = urlParams.get('id');
+      
+      if (gameId) {
+        await loadGameDetails(gameId);
       } else {
-        // User is not logged in
-        if (authLinks) authLinks.style.display = 'block';
-        if (userMenu) userMenu.style.display = 'none';
-        return false;
+        gameDetailContainer.innerHTML = '<div class="error">No game ID specified</div>';
       }
-    }
-    
+    });
+
     // Function to get URL parameters
     function getUrlParameter(name) {
       name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -534,34 +651,40 @@
     }
     
     // Function to handle user ratings
-    function setupRating(game) {
+    async function setupRating(game) {
       const ratingContainer = document.getElementById('rating-container');
       if (!ratingContainer) return;
       
-      const isLoggedIn = checkLoginStatus();
+      // Get current user and check login status
+      const user = await getCurrentUser();
+      const isLoggedIn = !!user;
       
       if (!isLoggedIn) {
+        // If not logged in, show login/register prompt
         ratingContainer.innerHTML = `
-          <p class="login-to-rate">
-            <a href="../login/index.html">Login</a> to rate this game
-          </p>
+          <div class="login-prompt">
+            <p>You need to be logged in to write a review.</p>
+            <div class="auth-buttons">
+              <a href="/pages/login/index.html" class="btn btn-primary">Login</a>
+              <a href="/pages/register/index.html" class="btn">Register</a>
+            </div>
+          </div>
         `;
         return;
       }
       
-      // Create review form
+      // Create review form for logged in users
       ratingContainer.innerHTML = `
         <div class="user-rating">
-          <h3>Write a Review</h3>
           <form id="review-form">
             <div class="star-rating">
               <p>Your Rating:</p>
               <div class="stars">
-                <span class="star" data-value="1">☆</span>
-                <span class="star" data-value="2">☆</span>
-                <span class="star" data-value="3">☆</span>
-                <span class="star" data-value="4">☆</span>
-                <span class="star" data-value="5">☆</span>
+                <i class="star fa fa-star" data-value="1"></i>
+                <i class="star fa fa-star" data-value="2"></i>
+                <i class="star fa fa-star" data-value="3"></i>
+                <i class="star fa fa-star" data-value="4"></i>
+                <i class="star fa fa-star" data-value="5"></i>
               </div>
               <span id="selected-rating">0</span>/5
             </div>
@@ -577,20 +700,39 @@
       
       // Handle star selection
       let selectedRating = 0;
-      document.querySelectorAll('.star').forEach(star => {
+      const stars = document.querySelectorAll('.star');
+      
+      stars.forEach(star => {
+        // Set initial state to empty stars
+        star.classList.add('star-empty');
+        
         star.addEventListener('mouseenter', function() {
           const value = parseInt(this.getAttribute('data-value'));
           
-          document.querySelectorAll('.star').forEach(s => {
+          // Highlight stars on hover
+          stars.forEach(s => {
             const starValue = parseInt(s.getAttribute('data-value'));
-            s.textContent = starValue <= value ? '★' : '☆';
+            if (starValue <= value) {
+              s.classList.add('star-full');
+              s.classList.remove('star-empty');
+            } else {
+              s.classList.add('star-empty');
+              s.classList.remove('star-full');
+            }
           });
         });
         
         star.addEventListener('mouseleave', function() {
-          document.querySelectorAll('.star').forEach(s => {
+          // Reset to selected rating when mouse leaves
+          stars.forEach(s => {
             const starValue = parseInt(s.getAttribute('data-value'));
-            s.textContent = starValue <= selectedRating ? '★' : '☆';
+            if (starValue <= selectedRating) {
+              s.classList.add('star-full');
+              s.classList.remove('star-empty');
+            } else {
+              s.classList.add('star-empty');
+              s.classList.remove('star-full');
+            }
           });
         });
         
@@ -598,9 +740,16 @@
           selectedRating = parseInt(this.getAttribute('data-value'));
           document.getElementById('selected-rating').textContent = selectedRating;
           
-          document.querySelectorAll('.star').forEach(s => {
+          // Update stars visually
+          stars.forEach(s => {
             const starValue = parseInt(s.getAttribute('data-value'));
-            s.textContent = starValue <= selectedRating ? '★' : '☆';
+            if (starValue <= selectedRating) {
+              s.classList.add('star-full');
+              s.classList.remove('star-empty');
+            } else {
+              s.classList.add('star-empty');
+              s.classList.remove('star-full');
+            }
           });
         });
       });
@@ -629,151 +778,257 @@
         }
         
         try {
-          // Add the review
-          await addReview(
-            game.id.toString(), 
-            content, 
-            selectedRating, 
-            game.name,
-            game.background_image
-          );
+          // Check if user is logged in and get current user data
+          const isAuth = await isAuthenticated();
+          console.log(`User authentication check: ${isAuth ? 'Authenticated' : 'Not authenticated'}`);
           
-          // Refresh reviews
-          loadReviews(game.id);
+          if (!isAuth) {
+            reviewError.textContent = 'You must be logged in to submit a review';
+            reviewError.style.display = 'block';
+            return;
+          }
           
-          // Reset form
-          document.getElementById('review-content').value = '';
-          selectedRating = 0;
-          document.getElementById('selected-rating').textContent = '0';
-          document.querySelectorAll('.star').forEach(s => {
-            s.textContent = '☆';
+          const currentUser = await getCurrentUser(true); // Force refresh to get latest user data
+          
+          if (!currentUser) {
+            reviewError.textContent = 'Unable to retrieve user information. Please log in again.';
+            reviewError.style.display = 'block';
+            return;
+          }
+          
+          console.log('Current user:', currentUser.username, currentUser.id);
+          
+          // Ensure we have a valid auth token
+          let authToken = localStorage.getItem('authToken');
+          console.log(`Auth token from localStorage: ${authToken ? 'Present' : 'Missing'}`);
+          
+          if (!authToken) {
+            console.log('Trying sessionStorage for auth token');
+            authToken = sessionStorage.getItem('authToken');
+            console.log(`Auth token from sessionStorage: ${authToken ? 'Present' : 'Missing'}`);
+          }
+          
+          if (!authToken) {
+            console.warn('No auth token found, attempting to refresh authentication...');
+            
+            // Try to re-authenticate and get a new token
+            try {
+              // First try to log in with cached credentials if available
+              const cachedUser = JSON.parse(localStorage.getItem('currentUser'));
+              if (cachedUser && cachedUser.username) {
+                console.log(`Attempting to refresh authentication for user: ${cachedUser.username}`);
+                
+                // Store the new token in both storage types
+                authToken = localStorage.getItem('authToken');
+                
+                if (!authToken) {
+                  reviewError.textContent = 'Authentication failed. Please log in again.';
+                  reviewError.style.display = 'block';
+                  return;
+                }
+                
+                console.log('Authentication refreshed successfully');
+              } else {
+                reviewError.textContent = 'No user information found. Please log in again.';
+                reviewError.style.display = 'block';
+                return;
+              }
+            } catch (authError) {
+              console.error('Error refreshing authentication:', authError);
+              reviewError.textContent = 'Authentication failed. Please log in again.';
+              reviewError.style.display = 'block';
+              return;
+            }
+          }
+          
+          console.log('Using auth token:', authToken.substring(0, 10) + '...');
+          
+          // Store the token in both storage types for redundancy
+          try {
+            localStorage.setItem('authToken', authToken);
+            sessionStorage.setItem('authToken', authToken);
+            console.log('Auth token stored in both localStorage and sessionStorage');
+          } catch (storageError) {
+            console.error('Error storing auth token:', storageError);
+          }
+          
+          // Submit the review with authentication
+          console.log(`Submitting review for game ${game.id} with rating ${selectedRating}`);
+          const response = await fetch(`/games/${game.id}/reviews`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({
+              rating: selectedRating,
+              content: content
+            })
           });
           
-          // Show success message
-          reviewError.textContent = 'Review submitted successfully!';
-          reviewError.style.color = 'green';
-          reviewError.style.display = 'block';
+          console.log(`Review submission status: ${response.status}`);
           
-          // Hide success message after 3 seconds
-          setTimeout(() => {
-            reviewError.style.display = 'none';
-          }, 3000);
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Review submission raw response:', errorText);
+            
+            try {
+              const errorJson = JSON.parse(errorText);
+              console.error('Review submission error:', errorJson);
+              throw new Error(errorJson.error || `Failed to submit review (${response.status})`);
+            } catch (e) {
+              console.error('Error parsing response:', errorText);
+              throw new Error(`Failed to submit review (${response.status}): ${errorText.substring(0, 100)}`);
+            }
+          }
+          
+          const newReview = await response.json();
+          console.log('Review submission successful:', newReview);
+          
+          // Refresh the page to ensure we see the most up-to-date reviews
+          // This ensures we don't have duplicate reviews when submitting multiple times
+          window.location.reload();
+          return; // Stop execution here since we're refreshing
           
         } catch (error) {
-          reviewError.textContent = error.message;
+          reviewError.textContent = error.message || 'Error submitting review. Please try again.';
           reviewError.style.color = 'red';
           reviewError.style.display = 'block';
         }
       });
     }
     
-    // Function to load reviews for this game
-    async function loadReviews(gameId) {
-      const reviews = getGameReviews(gameId);
-      const reviewsContainer = document.getElementById('game-reviews');
-      const currentUser = getCurrentUser();
-      
-      // Get rating data
-      const rating = getGameRating(gameId);
-      
-      // Update the game rating display
-      const ratingDisplay = document.getElementById('game-rating');
-      if (rating.count > 0) {
-        ratingDisplay.innerHTML = `
-          <div class="stars">${'★'.repeat(Math.round(rating.rating))}</div>
-          <div class="rating-text">${rating.rating.toFixed(1)} / 5 (${rating.count} ${rating.count === 1 ? 'review' : 'reviews'})</div>
-        `;
-      } else {
-        ratingDisplay.innerHTML = '<div class="no-rating">No user ratings yet</div>';
-      }
-      
-      if (reviews.length === 0) {
-        reviewsContainer.innerHTML = '<div class="no-reviews">No reviews yet. Be the first to review this game!</div>';
-        return;
-      }
-      
-      // Sort reviews by date (newest first)
-      const sortedReviews = [...reviews].sort((a, b) => {
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      });
-      
-      // Display the reviews
-      reviewsContainer.innerHTML = '';
-      
-      sortedReviews.forEach(review => {
-        const reviewElement = document.createElement('div');
-        reviewElement.className = 'review-item';
+    // Helper function to update rating display
+    async function updateRatingDisplay(gameId) {
+      try {
+        // Get all reviews
+        const reviewsResponse = await fetchGameReviews(gameId);
+        const reviews = Array.isArray(reviewsResponse) ? reviewsResponse : (reviewsResponse.reviews || []);
         
-        const isCurrentUserReview = currentUser && review.userId === currentUser.id;
+        // Calculate average rating
+        let totalRating = 0;
+        reviews.forEach(review => {
+          totalRating += review.rating;
+        });
         
-        reviewElement.innerHTML = `
-          <div class="review-header">
-            <div class="review-user">${review.username}</div>
-            <div class="review-rating">
-              <div class="stars">${'★'.repeat(review.rating)}</div>
-              <div class="rating-value">${review.rating}/5</div>
+        const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
+        
+        // Update the game rating display
+        const ratingDisplay = document.getElementById('game-rating');
+        if (reviews.length > 0) {
+          const fullStars = Math.floor(averageRating);
+          const halfStar = averageRating % 1 >= 0.5 ? 1 : 0;
+          const emptyStars = 5 - fullStars - halfStar;
+          
+          let starsHtml = '';
+          // Add full stars
+          for (let i = 0; i < fullStars; i++) {
+            starsHtml += '<i class="fa fa-star star-full"></i>';
+          }
+          // Add half star if needed
+          if (halfStar) {
+            starsHtml += '<i class="fa fa-star-half-alt star-full"></i>';
+          }
+          // Add empty stars
+          for (let i = 0; i < emptyStars; i++) {
+            starsHtml += '<i class="fa fa-star star-empty"></i>';
+          }
+          
+          ratingDisplay.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 15px; margin-top: 40px;">
+              <div class="stars" style="font-size: 1.5rem; letter-spacing: 5px;">${starsHtml}</div>
+              <div class="rating-text">${averageRating.toFixed(1)} / 5 (${reviews.length} ${reviews.length === 1 ? 'review' : 'reviews'})</div>
             </div>
-          </div>
-          <div class="review-date">${formatDate(review.createdAt)}</div>
-          <div class="review-content">${review.content}</div>
-          ${isCurrentUserReview ? '<button class="delete-review-btn">Delete Review</button>' : ''}
-        `;
-        
-        if (isCurrentUserReview) {
-          const deleteButton = reviewElement.querySelector('.delete-review-btn');
-          deleteButton.addEventListener('click', async () => {
-            if (confirm('Are you sure you want to delete your review?')) {
-              try {
-                await deleteReview(gameId, review.id);
-                loadReviews(gameId); // Reload reviews after deletion
-              } catch (error) {
-                console.error('Error deleting review:', error);
-                alert('Failed to delete review: ' + error.message);
-              }
-            }
-          });
+          `;
+        } else {
+          ratingDisplay.innerHTML = '<div class="no-rating" style="margin-top: 40px; padding: 10px 0;">No user ratings yet</div>';
         }
-        
-        reviewsContainer.appendChild(reviewElement);
-      });
+      } catch (error) {
+        console.error('Error updating rating display:', error);
+      }
     }
     
-    document.addEventListener('DOMContentLoaded', async () => {
-      // Check if user is logged in
-      checkLoginStatus();
+    // Function to load reviews for this game
+    async function loadReviews(gameId) {
+      const reviewsContainer = document.getElementById('reviews-container');
+      const currentUser = await getCurrentUser();
       
-      // User menu dropdown toggle
-      const userMenuButton = document.getElementById('user-menu-button');
-      const userDropdown = document.getElementById('user-dropdown');
-      
-      if (userMenuButton) {
-        userMenuButton.addEventListener('click', (e) => {
-          userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
-        });
-      }
-      
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (e.target !== userMenuButton && !userMenuButton.contains(e.target)) {
-          userDropdown.style.display = 'none';
+      try {
+        // Fetch reviews from API
+        const reviewsResponse = await fetchGameReviews(gameId);
+        const reviews = Array.isArray(reviewsResponse) ? reviewsResponse : (reviewsResponse.reviews || []);
+        
+        // Update rating display
+        await updateRatingDisplay(gameId);
+        
+        if (!reviews || reviews.length === 0) {
+          reviewsContainer.innerHTML = '<div class="no-reviews">No reviews yet. Be the first to review this game!</div>';
+          return;
         }
-      });
-      
-      // Handle logout
-      document.getElementById('logout-button')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        logout();
-        window.location.reload();
-      });
-      
-      // Get game ID from URL
-      const gameId = getUrlParameter('id');
-      
-      if (!gameId) {
-        window.location.href = 'list.html';
-        return;
+        
+        // Sort reviews by date (newest first)
+        const sortedReviews = [...reviews].sort((a, b) => {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+        
+        // Display the reviews
+        reviewsContainer.innerHTML = '<h3>Reviews</h3>';
+        
+        sortedReviews.forEach(review => {
+          const reviewElement = document.createElement('div');
+          reviewElement.className = 'review-item';
+          reviewElement.dataset.reviewId = review.id;
+          
+          const isCurrentUserReview = currentUser && review.userId == currentUser.id;
+          const isAdmin = currentUser?.isAdmin === true;
+          const canDeleteReview = isCurrentUserReview || isAdmin;
+          
+          reviewElement.innerHTML = `
+            <div class="review-header">
+              <div class="review-user">${review.username || 'Anonymous'}</div>
+              <div class="review-rating">
+                ${getStarHtml(review.rating)}
+                <div class="rating-value">${review.rating}/5</div>
+              </div>
+            </div>
+            <div class="review-date">${formatDate(review.createdAt)}</div>
+            <div class="review-content">${review.content || 'No written review provided.'}</div>
+            ${canDeleteReview ? '<button class="delete-review-btn">Delete Review</button>' : ''}
+          `;
+          
+          if (canDeleteReview) {
+            const deleteButton = reviewElement.querySelector('.delete-review-btn');
+            deleteButton.addEventListener('click', async () => {
+              if (confirm('Are you sure you want to delete your review?')) {
+                try {
+                  await deleteReview(review.id);
+                  reviewElement.remove();
+                  
+                  // If no more reviews, show the "no reviews" message
+                  if (reviewsContainer.querySelectorAll('.review-item').length === 0) {
+                    reviewsContainer.innerHTML = '<div class="no-reviews">No reviews yet. Be the first to review this game!</div>';
+                  }
+                  
+                  // Update rating display
+                  updateRatingDisplay(gameId);
+                } catch (error) {
+                  console.error('Error deleting review:', error);
+                  alert('Failed to delete review: ' + error.message);
+                }
+              }
+            });
+          }
+          
+          reviewsContainer.appendChild(reviewElement);
+        });
+      } catch (error) {
+        console.error('Error loading reviews:', error);
+        reviewsContainer.innerHTML = '<div class="error">Error loading reviews. Please try again later.</div>';
       }
-      
+    }
+    
+    // Function to load game details
+    async function loadGameDetails(gameId) {
       const gameContainer = document.getElementById('game-container');
       
       try {
@@ -792,15 +1047,15 @@
         renderGameDetails(game, screenshots);
         
         // Set up user rating
-        setupRating(game);
+        await setupRating(game);
         
         // Load reviews
-        loadReviews(game.id);
+        await loadReviews(game.id);
         
         // Subscribe to new reviews
-        const unsubscribe = onNewReview(event => {
+        const unsubscribe = await onNewReview(async event => {
           if (event.gameId === game.id.toString()) {
-            loadReviews(game.id);
+            await loadReviews(game.id);
           }
         });
         
@@ -812,7 +1067,7 @@
         console.error('Error loading game details:', error);
         showError(`Error loading game details. Please try again later. <br><small>Error details: ${error.message}</small>`, gameContainer);
       }
-    });
+    }
     
     // Function to render game details
     function renderGameDetails(game, screenshots) {
@@ -823,17 +1078,17 @@
       
       // Create clickable genres HTML
       const genresHtml = game.genres && game.genres.length > 0 
-        ? game.genres.map(g => `<a href="../genre-details.html?id=${g.id}" class="tag-link">${g.name}</a>`).join(', ')
+        ? game.genres.map(g => `<a href="list.html?genre=${g.id}" class="tag-link">${g.name}</a>`).join(', ')
         : 'Unknown';
       
       // Create clickable developers HTML
       const developersHtml = game.developers && game.developers.length > 0
-        ? game.developers.map(d => `<a href="../developer-details.html?id=${d.id}" class="tag-link">${d.name}</a>`).join(', ')
+        ? game.developers.map(d => `<a href="list.html?developer=${d.id}" class="tag-link">${d.name}</a>`).join(', ')
         : '';
       
       // Create clickable publishers HTML
       const publishersHtml = game.publishers && game.publishers.length > 0
-        ? game.publishers.map(p => `<a href="../publisher-details.html?id=${p.id}" class="tag-link">${p.name}</a>`).join(', ')
+        ? game.publishers.map(p => `<a href="list.html?publisher=${p.id}" class="tag-link">${p.name}</a>`).join(', ')
         : '';
       
       // HTML for game details
@@ -850,6 +1105,10 @@
           </div>
           <div class="game-info">
             <h1>${game.name}</h1>
+            <div style="height: 50px; clear: both;"></div>
+            <div id="game-rating" class="game-rating" style="display: block; margin: 20px 0;">
+              <!-- Rating will be populated by loadReviews() -->
+            </div>
             
             <div class="game-meta">
               ${game.released ? `<p><strong>Release Date:</strong> ${formatDate(game.released)}</p>` : ''}
@@ -861,14 +1120,6 @@
               ${developersHtml ? `<p><strong>Developer:</strong> ${developersHtml}</p>` : ''}
               
               ${publishersHtml ? `<p><strong>Publisher:</strong> ${publishersHtml}</p>` : ''}
-            </div>
-            
-            <div id="game-rating" class="game-rating">
-              <!-- Rating will be populated by loadReviews() -->
-            </div>
-            
-            <div id="rating-container" class="user-rating-container">
-              <!-- User rating form will be populated by setupRating() -->
             </div>
           </div>
         </div>
@@ -882,10 +1133,39 @@
           </div>
         ` : ''}
         
-        <div id="reviews-container" class="reviews-container">
-          <!-- Reviews will be populated by loadReviews() -->
+        <div class="user-review-section">
+          <h2>Write a Review</h2>
+          <div id="rating-container" class="user-rating-container">
+            <!-- User rating form will be populated by setupRating() -->
+          </div>
+        </div>
+        
+        <div class="reviews-section">
+          <h2>User Reviews</h2>
+          <div id="reviews-container" class="reviews-container">
+            <!-- Reviews will be populated by loadReviews() -->
+          </div>
         </div>
       `;
+    }
+
+    // Helper function to generate star HTML
+    function getStarHtml(rating) {
+      const fullStars = Math.floor(rating);
+      const emptyStars = 5 - fullStars;
+      
+      let html = '<div class="stars">';
+      // Add full stars
+      for (let i = 0; i < fullStars; i++) {
+        html += '<i class="fa fa-star star-full"></i>';
+      }
+      // Add empty stars
+      for (let i = 0; i < emptyStars; i++) {
+        html += '<i class="fa fa-star star-empty"></i>';
+      }
+      html += '</div>';
+      
+      return html;
     }
   </script>
 </body>
