@@ -1,0 +1,158 @@
+/**
+ * CSS Reset - GameRevu Application
+ * 
+ * This file provides a set of default styles that eliminate cross-browser
+ * inconsistencies and provide a clean slate for the application styling.
+ */
+
+/* 
+ * Box Sizing Reset
+ * Sets all elements to use border-box to make sizing more predictable 
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 
+ * Document Reset
+ * Sets base properties for the HTML and body elements 
+ */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  text-rendering: optimizeSpeed;
+  font-family: var(--font-main);
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 
+ * Typography Reset
+ * Removes default margins from headings and paragraphs 
+ */
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+  font-weight: normal;
+}
+
+/* 
+ * List Reset
+ * Removes default styling from lists 
+ */
+ul, ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 
+ * Form Element Reset
+ * Normalizes form elements across browsers 
+ */
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/**
+ * Remove the default vertical scrollbar in IE 10+.
+ */
+textarea {
+  overflow: auto;
+}
+
+/**
+ * Correct cursor style of increment and decrement buttons in Chrome.
+ */
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/* 
+ * Anchor Reset
+ * Removes default styling from links 
+ */
+a {
+  text-decoration: none;
+  color: inherit;
+  background-color: transparent;
+}
+
+/* 
+ * Image Reset
+ * Makes images responsive by default 
+ */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 
+ * Table Reset
+ * Normalizes table elements across browsers 
+ */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* 
+ * Hidden Element
+ * Helper class for screen-reader only content
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* 
+ * Focus Styles
+ * Improves focus visibility for keyboard navigation 
+ */
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* 
+ * RTL Support
+ * Ensures proper display for right-to-left languages 
+ */
+[dir="rtl"] {
+  text-align: right;
+} 

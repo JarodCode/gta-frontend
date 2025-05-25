@@ -1,0 +1,266 @@
+/**
+ * Buttons - GameRevu Application
+ * 
+ * This file defines all button styles and variations used in the application.
+ * It includes various sizes, colors, and states for buttons.
+ */
+
+/* 
+ * Base Button
+ * Default button styling 
+ */
+.button {
+  display: inline-block;
+  background-color: var(--bg-light);
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 0 5px var(--glow-color);
+  font-family: var(--font-heading);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.button:hover, .button:focus {
+  background-color: var(--primary-color);
+  color: var(--bg-dark);
+  box-shadow: 0 0 15px var(--glow-color);
+  outline: none;
+}
+
+.button:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 8px var(--glow-color);
+}
+
+.button:disabled, .button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* 
+ * Button Sizes
+ * Different size variations 
+ */
+.button-xs {
+  padding: calc(var(--space-xs) / 2) var(--space-xs);
+  font-size: 0.75rem;
+}
+
+.button-sm {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: 0.8125rem;
+}
+
+.button-md {
+  /* Default size defined in base button */
+}
+
+.button-lg {
+  padding: var(--space-sm) var(--space-lg);
+  font-size: 1rem;
+}
+
+.button-xl {
+  padding: var(--space-md) var(--space-xl);
+  font-size: 1.125rem;
+}
+
+/* 
+ * Button Variations
+ * Different color and style variations 
+ */
+.button-primary {
+  background-color: var(--primary-color);
+  color: var(--bg-dark);
+  border-color: var(--primary-color);
+}
+
+.button-primary:hover, .button-primary:focus {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: var(--bg-dark);
+}
+
+.button-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-primary);
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 5px rgba(255, 0, 230, 0.6);
+}
+
+.button-secondary:hover, .button-secondary:focus {
+  background-color: var(--bg-dark);
+  color: var(--secondary-color);
+  box-shadow: 0 0 15px rgba(255, 0, 230, 0.6);
+}
+
+.button-accent {
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 5px rgba(123, 76, 255, 0.6);
+}
+
+.button-accent:hover, .button-accent:focus {
+  background-color: var(--bg-dark);
+  color: var(--accent-color);
+  box-shadow: 0 0 15px rgba(123, 76, 255, 0.6);
+}
+
+.button-success {
+  background-color: var(--success-color);
+  color: var(--bg-dark);
+  border-color: var(--success-color);
+  box-shadow: 0 0 5px rgba(0, 255, 170, 0.6);
+}
+
+.button-success:hover, .button-success:focus {
+  background-color: var(--bg-dark);
+  color: var(--success-color);
+  box-shadow: 0 0 15px rgba(0, 255, 170, 0.6);
+}
+
+.button-error {
+  background-color: var(--error-color);
+  color: var(--text-primary);
+  border-color: var(--error-color);
+  box-shadow: 0 0 5px rgba(255, 60, 90, 0.6);
+}
+
+.button-error:hover, .button-error:focus {
+  background-color: var(--bg-dark);
+  color: var(--error-color);
+  box-shadow: 0 0 15px rgba(255, 60, 90, 0.6);
+}
+
+.button-warning {
+  background-color: var(--warning-color);
+  color: var(--bg-dark);
+  border-color: var(--warning-color);
+  box-shadow: 0 0 5px rgba(255, 204, 0, 0.6);
+}
+
+.button-warning:hover, .button-warning:focus {
+  background-color: var(--bg-dark);
+  color: var(--warning-color);
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.6);
+}
+
+/* 
+ * Button Styles
+ * Different visual styles 
+ */
+.button-outline {
+  background-color: transparent;
+}
+
+.button-text {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.button-text:hover, .button-text:focus {
+  background-color: rgba(0, 238, 255, 0.1);
+  box-shadow: none;
+}
+
+.button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.button-icon-only {
+  padding: var(--space-sm);
+  border-radius: 50%;
+  aspect-ratio: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-rounded {
+  border-radius: var(--radius-pill);
+}
+
+/* 
+ * Button Layout Helpers
+ * Additional classes for button positioning and layout 
+ */
+.button-block {
+  display: block;
+  width: 100%;
+}
+
+.button-group {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.button-group-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.button-group-end {
+  justify-content: flex-end;
+}
+
+.button-group-center {
+  justify-content: center;
+}
+
+.button-group-space-between {
+  justify-content: space-between;
+}
+
+/* 
+ * Loading Button
+ * Button with loading state 
+ */
+.button-loading {
+  position: relative;
+  pointer-events: none;
+  color: transparent;
+}
+
+.button-loading::after {
+  content: "";
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  top: 50%;
+  left: 50%;
+  margin-top: -0.5rem;
+  margin-left: -0.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--text-primary);
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+/* 
+ * Responsive adjustments
+ * Adjustments for different screen sizes 
+ */
+@media screen and (max-width: 480px) {
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .button-responsive {
+    width: 100%;
+  }
+} 

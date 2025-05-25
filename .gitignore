@@ -25,3 +25,7 @@ deno-dir/
 # Environnement
 .env
 .env.*
+
+# Data files (user data, etc.)
+data/
+*.sqlite

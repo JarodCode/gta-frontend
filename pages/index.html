@@ -1,0 +1,39 @@
+// Function to load game details
+async function loadGameDetails(gameId) {
+  const gameDetailContainer = document.getElementById('game-detail');
+  
+  try {
+    gameDetailContainer.innerHTML = '<div class="loading">Loading game details...</div>';
+    
+    // Get game data from our hardcoded list
+    const game = await fetchGameById(gameId);
+    
+    if (!game) {
+      gameDetailContainer.innerHTML = '<div class="error">Game not found</div>';
+      return;
+    }
+    
+    console.log('Game details loaded:', game);
+    
+    // Transform the game data for display
+    const transformedGame = transformGameData(game);
+    
+    // Render the game details
+    renderGameDetails(transformedGame);
+    
+    // Load reviews
+    loadReviews(gameId);
+    
+    // Setup rating functionality
+    setupRating(transformedGame);
+    
+    // Load screenshots
+    loadScreenshots(gameId);
+    
+    // Load trailer
+    loadTrailer(gameId);
+  } catch (error) {
+    console.error('Error loading game details:', error);
+    gameDetailContainer.innerHTML = `<div class="error">Error loading game details: ${error.message}</div>`;
+  }
+} 

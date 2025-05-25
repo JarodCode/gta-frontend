@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Details - GameRevu</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/game-detail.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/js/game-detail.js" defer></script>
+</head>
+<body>
+  <!-- Header will be loaded dynamically -->
+  <div id="header-container"></div>
+
+  <main class="container">
+    <div id="error-container" style="display: none;"></div>
+    <div id="loading-indicator" class="loading-spinner">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Game details section -->
+    <section id="game-detail" class="game-detail-section">
+      <!-- Game details will be loaded dynamically -->
+    </section>
+
+    <!-- Reviews section -->
+    <section class="reviews-section">
+      <h2 class="section-title">Reviews</h2>
+      <div id="reviews-container" class="reviews-container">
+        <!-- Reviews will be loaded dynamically -->
+      </div>
+    </section>
+
+    <!-- Review form section -->
+    <section class="review-form-section">
+      <form id="review-form" class="review-form">
+        <div class="form-group">
+          <label for="rating">Rating</label>
+          <select id="rating" name="rating" required>
+            <option value="" disabled selected>Select a rating</option>
+            <option value="1">1 - Poor</option>
+            <option value="2">2 - Fair</option>
+            <option value="3">3 - Good</option>
+            <option value="4">4 - Very Good</option>
+            <option value="5">5 - Excellent</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="review-text">Your Review</label>
+          <textarea id="review-text" name="review-text" rows="5" placeholder="Write your review here..."></textarea>
+        </div>
+        <button type="submit" id="submit-review" class="button button-primary">Submit Review</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Footer will be loaded dynamically -->
+  <div id="footer-container"></div>
+
+  <script>
+    // Load header and footer components
+    document.addEventListener('DOMContentLoaded', () => {
+      // Load header
+      fetch('/components/header.html')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to load header');
+          }
+          return response.text();
+        })
+        .then(data => {
+          document.getElementById('header-container').innerHTML = data;
+          // Initialize header functionality if header.js exists
+          if (typeof initializeHeader === 'function') {
+            initializeHeader();
+          }
+        })
+        .catch(error => console.error('Error loading header:', error));
+
+      // Load footer
+      fetch('/components/footer.html')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to load footer');
+          }
+          return response.text();
+        })
+        .then(data => {
+          document.getElementById('footer-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error loading footer:', error));
+        
+      // Helper functions for authentication
+      async function isUserAuthenticated() {
+        try {
+          const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+          if (!authToken) return false;
+          
+          const response = await fetch('/api/users/me', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${authToken}`
+            }
+          });
+          
+          return response.ok;
+        } catch (error) {
+          console.error('Error checking authentication:', error);
+          return false;
+        }
+      }
+      
+      async function getCurrentUser() {
+        try {
+          const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+          if (!authToken) return null;
+          
+          const response = await fetch('/api/users/me', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${authToken}`
+            }
+          });
+          
+          if (!response.ok) return null;
+          return await response.json();
+        } catch (error) {
+          console.error('Error getting current user:', error);
+          return null;
+        }
+      }
+      
+      // Initialize the review form functionality
+      const reviewForm = document.getElementById('review-form');
+      const gameId = new URLSearchParams(window.location.search).get('id');
+      
+      if (reviewForm && gameId) {
+        reviewForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const rating = document.getElementById('rating').value;
+          const reviewText = document.getElementById('review-text').value;
+          
+          if (!rating) {
+            alert('Please select a rating');
+            return;
+          }
+          
+          // Check if user is authenticated
+          const isAuthenticated = await isUserAuthenticated();
+          
+          if (!isAuthenticated) {
+            alert('You need to be logged in to submit a review');
+            window.location.href = '/pages/login/index.html';
+            return;
+          }
+          
+          try {
+            const currentUser = await getCurrentUser();
+            const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+            
+            const response = await fetch(`/games/${gameId}/reviews`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+              },
+              body: JSON.stringify({
+                rating: parseInt(rating, 10),
+                content: reviewText,
+                username: currentUser?.username || 'Anonymous User'
+              })
+            });
+            
+            if (!response.ok) {
+              throw new Error('Failed to submit review');
+            }
+            
+            alert('Review submitted successfully!');
+            window.location.reload();
+          } catch (error) {
+            console.error('Error submitting review:', error);
+            alert('Failed to submit review: ' + error.message);
+          }
+        });
+      }
+      
+      // Load reviews for this game
+      async function loadReviews(gameId) {
+        const reviewsContainer = document.getElementById('reviews-container');
+        if (!reviewsContainer) return;
+        
+        try {
+          const response = await fetch(`/games/${gameId}/reviews`);
+          
+          if (!response.ok) {
+            throw new Error('Failed to load reviews');
+          }
+          
+          const reviews = await response.json();
+          
+          if (!reviews || reviews.length === 0) {
+            reviewsContainer.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to review this game!</p>';
+            return;
+          }
+          
+          // Sort reviews by date (newest first)
+          const sortedReviews = [...reviews].sort((a, b) => {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          });
+          
+          // Get current user to check for review ownership
+          const currentUser = await getCurrentUser();
+          
+          // Display the reviews
+          reviewsContainer.innerHTML = '';
+          
+          for (const review of sortedReviews) {
+            const reviewElement = document.createElement('div');
+            reviewElement.className = 'review-item';
+            
+            // Check if this review belongs to the current user or if user is admin
+            // Use loose comparison for userId to handle string/number type differences
+            const isCurrentUserReview = currentUser && review.userId == currentUser.id;
+            const isAdmin = currentUser?.isAdmin === true;
+            
+            reviewElement.innerHTML = `
+              <div class="review-header">
+                <div class="review-user">${review.username || 'Anonymous User'}</div>
+                <div class="review-rating">${generateStars(review.rating)}</div>
+              </div>
+              <div class="review-date">${formatDate(review.createdAt)}</div>
+              <div class="review-content">${review.content || 'No review content provided.'}</div>
+              ${(isCurrentUserReview || isAdmin) ? '<button class="delete-review-btn">Delete Review</button>' : ''}
+            `;
+            
+            // Add delete functionality if this is user's own review or user is admin
+            if (isCurrentUserReview || isAdmin) {
+              const deleteButton = reviewElement.querySelector('.delete-review-btn');
+              deleteButton.addEventListener('click', async () => {
+                if (confirm('Are you sure you want to delete this review?')) {
+                  try {
+                    const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+                    const response = await fetch(`/reviews/${review.id}`, {
+                      method: 'DELETE',
+                      headers: {
+                        'Authorization': `Bearer ${authToken}`
+                      }
+                    });
+                    
+                    if (!response.ok) {
+                      throw new Error('Failed to delete review');
+                    }
+                    
+                    reviewElement.remove();
+                    
+                    // If no more reviews, show the "no reviews" message
+                    if (reviewsContainer.children.length === 0) {
+                      reviewsContainer.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to review this game!</p>';
+                    }
+                  } catch (error) {
+                    console.error('Error deleting review:', error);
+                    alert('Failed to delete review: ' + error.message);
+                  }
+                }
+              });
+            }
+            
+            reviewsContainer.appendChild(reviewElement);
+          }
+        } catch (error) {
+          console.error('Error loading reviews:', error);
+          reviewsContainer.innerHTML = '<p class="error">Failed to load reviews. Please try again later.</p>';
+        }
+      }
+      
+      // Generate star rating HTML
+      function generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const emptyStars = 5 - fullStars;
+        
+        let starsHtml = '<div class="stars">';
+        for (let i = 0; i < fullStars; i++) {
+          starsHtml += '<span class="star full">★</span>';
+        }
+        for (let i = 0; i < emptyStars; i++) {
+          starsHtml += '<span class="star empty">☆</span>';
+        }
+        starsHtml += '</div>';
+        
+        return starsHtml;
+      }
+      
+      // Format date in a user-friendly way
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+      }
+      
+      // Load game details and reviews if game ID is present
+      const urlParams = new URLSearchParams(window.location.search);
+      const gameId = urlParams.get('id');
+      
+      if (gameId) {
+        // Load game details
+        fetch(`/games/${gameId}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to load game details');
+            }
+            return response.json();
+          })
+          .then(game => {
+            const gameDetailSection = document.getElementById('game-detail');
+            
+            gameDetailSection.innerHTML = `
+              <h1 class="game-title">${game.name}</h1>
+              <div class="game-info">
+                <div class="game-cover">
+                  <img src="${game.background_image || '/images/placeholder.jpg'}" alt="${game.name}">
+                </div>
+                <div class="game-details">
+                  <p class="game-release-date">Release Date: ${game.released ? new Date(game.released).toLocaleDateString() : 'Unknown'}</p>
+                  <p class="game-genres">Genres: ${game.genres ? game.genres.map(g => g.name).join(', ') : 'Unknown'}</p>
+                  <p class="game-platforms">Platforms: ${game.platforms ? game.platforms.map(p => p.platform.name).join(', ') : 'Unknown'}</p>
+                </div>
+              </div>
+              <div class="game-description">
+                ${game.description_raw || 'No description available.'}
+              </div>
+            `;
+            
+            // Load reviews after game details are loaded
+            loadReviews(gameId);
+          })
+          .catch(error => {
+            console.error('Error loading game details:', error);
+            document.getElementById('error-container').textContent = 'Failed to load game details. Please try again later.';
+            document.getElementById('error-container').style.display = 'block';
+            document.getElementById('loading-indicator').style.display = 'none';
+          });
+      } else {
+        document.getElementById('error-container').textContent = 'No game ID specified';
+        document.getElementById('error-container').style.display = 'block';
+        document.getElementById('loading-indicator').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html> 

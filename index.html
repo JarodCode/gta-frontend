@@ -1,11 +1,139 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <base href="/">
+    <title>GameTrackr - Track Your Gaming Journey</title>
+    <meta name="description" content="Track, rate, and review your gaming journey with GameTrackr - your personal video game diary.">
+    <!-- Use global.css for consistent styling across all pages -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/main.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>hello world!</h1>
+    <!-- Header will be inserted here -->
+    <div id="header-container"></div>
+
+    <div class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Track Your Gaming Journey</h2>
+                <p>Rate, review, and catalog your gaming experiences. Find your next adventure.</p>
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search for games...">
+                    <button id="search-button" class="btn btn-accent">Search</button>
+                </div>
+                <div class="auth-buttons" id="hero-auth-buttons">
+                    <div id="hero-unauthenticated" style="display: flex;">
+                        <a href="/pages/login/index.html" id="hero-login-button" class="button button-sm button-outline">Log In</a>
+                        <a href="/pages/register/index.html" id="hero-register-button" class="button button-sm button-primary">Sign Up</a>
+                    </div>
+                    <div id="hero-authenticated" style="width: 100%; display: flex; justify-content: center; align-items: center;">
+                        <span id="hero-username-display">Welcome, test37!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+        <!-- Featured games section removed -->
+        <!-- Top rated games section removed -->
+    </main>
+
+    <!-- Application scripts -->
+    <script>
+        // Simple non-module script to check auth status
+        function checkHeroAuthStatus() {
+            console.log('Checking hero section auth status');
+            const hasToken = !!localStorage.getItem('authToken');
+            const userData = localStorage.getItem('currentUser');
+            
+            const heroUnauthenticated = document.getElementById('hero-unauthenticated');
+            const heroAuthenticated = document.getElementById('hero-authenticated');
+            const heroUsernameDisplay = document.getElementById('hero-username-display');
+            
+            console.log('Hero auth check - Token exists:', hasToken);
+            console.log('Hero auth check - User data exists:', !!userData);
+            
+            if (hasToken && userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    console.log('User is authenticated as:', user.username);
+                    
+                    if (heroUnauthenticated) heroUnauthenticated.style.display = 'none';
+                    if (heroAuthenticated) heroAuthenticated.style.display = 'flex';
+                    if (heroUsernameDisplay) {
+                        heroUsernameDisplay.textContent = `Welcome, ${user.username}!`;
+                    }
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    showHeroUnauthenticatedUI();
+                }
+            } else {
+                showHeroUnauthenticatedUI();
+            }
+        }
+        
+        function showHeroUnauthenticatedUI() {
+            console.log('Showing hero unauthenticated UI');
+            const heroUnauthenticated = document.getElementById('hero-unauthenticated');
+            const heroAuthenticated = document.getElementById('hero-authenticated');
+            
+            if (heroUnauthenticated) heroUnauthenticated.style.display = 'flex';
+            if (heroAuthenticated) heroAuthenticated.style.display = 'none';
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Home page initialization started');
+            
+            // Load header component
+            fetch('/components/header.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('header-container').innerHTML = data;
+                    
+                    // Execute any scripts in the header component
+                    const scripts = document.getElementById('header-container').querySelectorAll('script');
+                    scripts.forEach(script => {
+                        const newScript = document.createElement('script');
+                        Array.from(script.attributes).forEach(attr => {
+                            newScript.setAttribute(attr.name, attr.value);
+                        });
+                        newScript.appendChild(document.createTextNode(script.innerHTML));
+                        script.parentNode.replaceChild(newScript, script);
+                    });
+                    
+                    // Check hero section auth status AFTER header loaded
+                    setTimeout(checkHeroAuthStatus, 100);
+                })
+                .catch(error => console.error('Error loading header component:', error));
+            
+            // Set up search functionality
+            const searchButton = document.getElementById('search-button');
+            if (searchButton) {
+                searchButton.addEventListener('click', function() {
+                    const searchInput = document.getElementById('search-input');
+                    if (searchInput && searchInput.value.trim()) {
+                        window.location.href = `/pages/games/list.html?search=${encodeURIComponent(searchInput.value.trim())}`;
+                    }
+                });
+            }
+            
+            // Allow searching with Enter key
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && searchInput.value.trim()) {
+                        window.location.href = `/pages/games/list.html?search=${encodeURIComponent(searchInput.value.trim())}`;
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

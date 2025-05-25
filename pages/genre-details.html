@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genre Details | Game Reviews</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .genre-header {
+            background-color: #f4f4f4;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+        
+        .genre-name {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .genre-description {
+            color: #333;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .genre-stats {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .game-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .game-card {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            background-color: white;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .game-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .game-card-content {
+            padding: 1rem;
+        }
+        
+        .game-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+        
+        .game-card .release-date {
+            margin: 0 0 0.5rem 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .game-card .description {
+            font-size: 0.9rem;
+            color: #555;
+            margin: 0.5rem 0 0 0;
+            line-height: 1.4;
+            height: 60px;
+            overflow: hidden;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #3366cc;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #d32f2f;
+        }
+        
+        .game-icon-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 150px;
+            background-color: #f0f0f0;
+        }
+        
+        .game-icon {
+            display: inline-block;
+            width: 60px;
+            height: 40px;
+            background-color: #555;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .game-icon:before {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #777;
+            border-radius: 50%;
+            top: 14px;
+            left: 12px;
+        }
+        
+        .game-icon:after {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #777;
+            border-radius: 50%;
+            top: 14px;
+            right: 12px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="../index.html">Game Library</a>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="games/list.html">Games</a></li>
+                        <li><a href="developers.html">Developers</a></li>
+                        <li><a href="publishers.html">Publishers</a></li>
+                        <li><a href="genres.html" class="active">Genres</a></li>
+                        <li id="auth-links">
+                            <a href="login/index.html">Login</a>
+                            <a href="register/index.html">Register</a>
+                        </li>
+                        <li id="user-menu" style="display: none;">
+                            <button id="user-menu-button">
+                                <span id="username-display">User</span>
+                                <span class="dropdown-arrow">▼</span>
+                            </button>
+                            <div id="user-dropdown" class="dropdown-menu">
+                                <a href="profile.html">Profile</a>
+                                <a href="#" id="logout-button">Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="genres.html" class="back-link">← Back to Genres</a>
+        
+        <div id="genre-container">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Loading genre details...
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Game Library. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { getHardcodedGames } from '../js/hardcoded-games.js';
+        import { getCurrentUser, logout } from '../js/auth.js';
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const genreId = parseInt(urlParams.get('id'), 10);
+            
+            if (!genreId) {
+                window.location.href = 'genres.html';
+                return;
+            }
+            
+            checkLoginStatus();
+            loadGenreDetails(genreId);
+            
+            // User menu dropdown toggle
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdown = document.getElementById('user-dropdown');
+            
+            if (userMenuButton) {
+                userMenuButton.addEventListener('click', (e) => {
+                    userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+                });
+            }
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (e.target !== userMenuButton && !userMenuButton.contains(e.target)) {
+                    userDropdown.style.display = 'none';
+                }
+            });
+            
+            // Logout functionality
+            document.getElementById('logout-button')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+                window.location.reload();
+            });
+        });
+        
+        function checkLoginStatus() {
+            const user = getCurrentUser();
+            const authLinks = document.getElementById('auth-links');
+            const userMenu = document.getElementById('user-menu');
+            
+            if (user) {
+                // User is logged in
+                authLinks.style.display = 'none';
+                userMenu.style.display = 'block';
+                document.getElementById('username-display').textContent = user.username;
+            } else {
+                // User is not logged in
+                authLinks.style.display = 'block';
+                userMenu.style.display = 'none';
+            }
+        }
+        
+        function loadGenreDetails(genreId) {
+            const genreContainer = document.getElementById('genre-container');
+            
+            try {
+                // Get all games from our hardcoded list
+                const games = getHardcodedGames();
+                
+                // Find genre details
+                const genreGames = games.filter(game => 
+                    game.genres && game.genres.some(genre => genre.id === genreId)
+                );
+                
+                if (genreGames.length === 0) {
+                    genreContainer.innerHTML = '<div class="error">Genre not found or no games available for this genre.</div>';
+                    return;
+                }
+                
+                // Get genre info from the first game
+                const genre = genreGames[0].genres.find(genre => genre.id === genreId);
+                
+                // Update page title
+                document.title = `${genre.name} Games | Game Reviews`;
+                
+                // Create HTML for genre header
+                let html = `
+                    <div class="genre-header">
+                        <h1 class="genre-name">${genre.name}</h1>
+                        <div class="genre-stats">
+                            <span>${genreGames.length} game${genreGames.length !== 1 ? 's' : ''}</span>
+                        </div>
+                    </div>
+                    
+                    <h2>Games</h2>
+                    <div class="game-cards">
+                `;
+                
+                // Add game cards
+                genreGames.forEach(game => {
+                    // Check if game has an image, otherwise use game controller icon
+                    const imageContent = game.background_image 
+                        ? `<img src="${game.background_image}" alt="${game.name}" loading="lazy" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'game-icon-container\\'><i class=\\'game-icon\\'></i></div>'">`
+                        : `<div class="game-icon-container"><i class="game-icon"></i></div>`;
+                    
+                    // Get a short description (first 120 characters)
+                    const shortDescription = game.description_raw 
+                        ? game.description_raw.substring(0, 120) + (game.description_raw.length > 120 ? '...' : '')
+                        : 'No description available';
+                    
+                    // Format release date
+                    const releaseDate = game.released ? new Date(game.released).toLocaleDateString() : 'Unknown release date';
+                    
+                    html += `
+                        <div class="game-card">
+                            <a href="games/index.html?id=${game.id}">
+                                ${imageContent}
+                                <div class="game-card-content">
+                                    <h3>${game.name}</h3>
+                                    <p class="release-date">Released: ${releaseDate}</p>
+                                    <p class="description">${shortDescription}</p>
+                                </div>
+                            </a>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+                
+                genreContainer.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading genre details:', error);
+                genreContainer.innerHTML = `<div class="error">Error loading genre details: ${error.message}</div>`;
+            }
+        }
+        
+        // Format date helper function
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+    </script>
+</body>
+</html> 
