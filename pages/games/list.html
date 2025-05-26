@@ -308,7 +308,6 @@
       <div class="sort-box">
         <label for="sort-select">Sort by:</label>
         <select id="sort-select">
-          <option value="user-rating">User Rating</option>
           <option value="name">Name</option>
           <option value="release-date">Release Date</option>
         </select>
@@ -530,9 +529,6 @@
       const sortOption = sortSelect.value;
       
       switch (sortOption) {
-        case 'user-rating':
-          allGames.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-          break;
         case 'name':
           allGames.sort((a, b) => a.name.localeCompare(b.name));
           break;
@@ -544,8 +540,8 @@
           });
           break;
         default:
-          // Default to rating
-          allGames.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+          // Default to name
+          allGames.sort((a, b) => a.name.localeCompare(b.name));
       }
     }
     
