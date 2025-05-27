@@ -27,6 +27,7 @@ jobs:
 
     # If you have tests
     - name: Run tests
+<<<<<<< HEAD
       run: deno test
       
     # For static analysis of HTML/CSS/JS files (optional)
@@ -49,3 +50,6 @@ jobs:
         key: ${{ runner.os }}-deno-${{ hashFiles('**/deps.ts') }}
         restore-keys: |
           ${{ runner.os }}-deno-
+=======
+      run: deno test
+>>>>>>> dev
