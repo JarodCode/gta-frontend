@@ -28,24 +28,3 @@ jobs:
     # If you have tests
     - name: Run tests
       run: deno test
-      
-    # For static analysis of HTML/CSS/JS files (optional)
-    - name: HTMLHint
-      run: |
-        npm install -g htmlhint
-        htmlhint ./path/to/html/files
-      continue-on-error: true
-
-    - name: StyleLint
-      run: |
-        npm install -g stylelint stylelint-config-standard
-        stylelint "./path/to/css/files/**/*.css"
-      continue-on-error: true
-      
-    - name: Cache dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/deno
-        key: ${{ runner.os }}-deno-${{ hashFiles('**/deps.ts') }}
-        restore-keys: |
-          ${{ runner.os }}-deno-

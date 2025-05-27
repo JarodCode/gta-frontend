@@ -54,21 +54,21 @@ class Login {
    * @param {Event} e - Form submit event
    */
   async handleSubmit(e) {
-    e.preventDefault();
-    
+      e.preventDefault();
+      
     // Clear previous errors
     this.clearErrors();
-    
-    // Get form data
+      
+      // Get form data
     const username = this.usernameInput.value.trim();
     const password = this.passwordInput.value;
     
     // Validate inputs
     if (!this.validateInputs(username, password)) {
-      return;
-    }
-    
-    try {
+        return;
+      }
+      
+      try {
       // Show loading state
       this.setLoading(true);
       
@@ -84,7 +84,7 @@ class Login {
       
       // Show success message and redirect
       this.showSuccess();
-    } catch (error) {
+      } catch (error) {
       console.error('Login failed:', error);
       this.handleError(error);
     } finally {
